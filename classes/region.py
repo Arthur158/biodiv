@@ -1,4 +1,5 @@
 from classes.climate import Temperature, Humidity, Climate, infer_climate
+from classes.population import Population
 from errors import InputError
 
 class Region:
@@ -18,4 +19,5 @@ class Region:
         self.name = name
         self.populations = []
        
-       
+    def add_population(self, population: Population):
+        self.populations.append(population)

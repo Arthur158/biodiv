@@ -1,4 +1,4 @@
-from diet import Diet 
+from classes.diet import Diet 
 from typing import Set
 
 class Species:

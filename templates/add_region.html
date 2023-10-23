@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Climate Form</title>
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='images/1.png') }}");
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            height: 100vh;  /* makes sure the body takes up full viewport height */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        form {
+            width: 500px;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            background-color: #3498db;
+            color: #ffffff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+
+        .results {
+            width: 500px;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-height: calc(100vh - 300px);  /* setting a max-height based on the viewport height */
+            overflow-y: auto;  /* makes this div scrollable if the content exceeds its max height */
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            background-color: #ffffff;
+        }
+
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .back-btn {
+            width: 150px;
+            margin: 20px auto;
+            padding: 10px;
+            text-align: center;
+            background-color: #e74c3c;
+            color: #ffffff;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <h1>Climate Information</h1>
+    <a href="/" class="back-btn">Back to Menu</a>
+
+    <form action="/add_region" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
+
+        <label for="climate">Climate:</label>
+        <select id="climate" name="climate" required>
+            <option value="">--Select--</option>
+            <option value="tropical_rainforest">tropical_rainforest</option>
+            <option value="tropical_savanna">tropical_savanna</option>
+            <option value="hot_desert">hot_desert</option>
+            <option value="oceanic">oceanic</option>
+            <option value="mediterranean">mediterranean</option>
+            <option value="semi_arid">semi_arid</option>
+            <option value="tundra">tundra</option>
+            <option value="cold_continental">cold_continental</option>
+            <option value="cold_desert">cold_desert</option>
+        </select>
+        <br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <h2>Regions:</h2>
+    <div class="results">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Climate</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for region in regions %}
+                <tr>
+                    <td>{{ region[0] }}</td>
+                    <td>{{ region[1] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

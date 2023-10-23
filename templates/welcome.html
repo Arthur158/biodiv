@@ -1,13 +1,68 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Home Page</title>
+    <style>
+        /* Base styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            /* Placeholder for background image, replace 'url(...)' with your image path when you have it */
+            background-image: url("{{ url_for('static', filename='images/2.png') }}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        h1 {
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+            margin-bottom: 20px;
+        }
+
+        /* Button styling */
+        form {
+            margin: 10px 0;
+        }
+
+        input[type="submit"] {
+            background-color: #3498db;
+            color: #ffffff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin: 5px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+
+    </style>
 </head>
 <body>
     <h1>Welcome to the Home Page!</h1>
     <!-- Button to navigate to the Add User page -->
-    <form action="/add_user" method="get">
-        <input type="submit" value="Add User">
+    <form action="/add_region" method="post">
+        <input type="submit" value="Add Region">
+    </form>
+    <form action="/add_species" method="post">
+        <input type="submit" value="Add Species">
+    </form>
+    <form action="/see_species" method="post">
+        <input type="submit" value="See Species">
+    </form>
+    <form action="/see_world" method="post">
+        <input type="submit" value="See World">
     </form>
 </body>
 </html>

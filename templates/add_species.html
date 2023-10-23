@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Species Form</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            background-image: url("{{ url_for('static', filename='images/3.png') }}");
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2, form, .back-btn {
+            flex-shrink: 0;
+        }
+
+        .results {
+            flex-grow: 1;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        /* ... (rest of your styles unchanged) ... */
+
+    </style>
+</head>
+<body>
+    <!-- ... (rest of your HTML content unchanged) ... -->
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Species Form</title>
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='images/3.png') }}");
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="submit"] {
+            background-color: #3498db;
+            color: #ffffff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+
+        .results {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            background-color: #ffffff;
+        }
+
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .checkbox-group {
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .back-btn {
+            display: block;
+            width: 150px;
+            margin: 20px auto;
+            padding: 10px;
+            text-align: center;
+            background-color: #e74c3c;
+            color: #ffffff;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        .back-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <h1>Add A Species</h1>
+    <form action="/add_species" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
+
+        <label>Trophic Type:</label>
+        <form method="post" action="/your_route">
+            <label><input type="checkbox" name="trophic_type" value="carnivore"> Carnivore</label>
+            <label><input type="checkbox" name="trophic_type" value="herbivore"> Herbivore</label>
+            <label><input type="checkbox" name="trophic_type" value="autotrophic"> Autotrophic</label>
+            <input type="submit" value="Submit">
+        </form>
+        <br>
+
+    </form>
+
+    <h2>Species:</h2>
+    <div class="results">{{ results }}
+        <table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Trophic Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for specie in species %}
+        <tr>
+            <td>{{ specie[0] }}</td>
+            <td>{{ specie[1] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+    </div>
+
+    <!-- Back button to the menu -->
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="/" style="text-decoration: none; background-color: #3498db; color: #ffffff; padding: 10px 15px; border-radius: 4px;">Back to Menu</a>
+    </div>
+
+</body>
+</html>

@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-class diet(Enum):
+class Diet(Enum):
     carnivore = auto()
     herbivore = auto()
     autotrophic = auto()
