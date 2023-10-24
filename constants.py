@@ -14,4 +14,5 @@ STRINGS_TO_CLIMATES = {
     "semi_arid": Climate.semi_arid,
     "tundra": Climate.tundra,
 }
-DATABASE_NAME = "planet.db";
+DATABASE_NAME = "planet.db"
+SPECIES_IMAGE_FOLDER = "static/images/species"

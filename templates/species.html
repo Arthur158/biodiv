@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Species Information</title>
+    <style>
+        /* Base styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Header section */
+        h1 {
+            margin-top: 20px;
+            font-size: 48px;
+        }
+        
+        /* Back Button */
+        .back-button {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Image section */
+        img {
+            max-width: 100%;
+            height: auto;
+            margin: 20px;
+        }
+        
+        /* File Upload */
+        .file-upload {
+            margin: 20px;
+        }
+
+        /* Bottom section */
+        .bottom-section {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        /* Data section */
+        .data-section {
+            flex: 3;
+        }
+        
+        .data-section ul {
+            list-style-type: none;
+        }
+
+        /* Table section */
+        .table-section {
+            flex: 1;
+            height: 200px; /* Adjust as needed */
+            overflow-y: scroll;
+        }
+        .back-button {
+            margin-top: 10px;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+        img {
+            max-width: 500px;  /* or whatever size you want */
+            max-height: 300px; /* or whatever size you want */
+            object-fit: contain; /* This makes sure the aspect ratio is maintained */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Back Button -->
+    <button class="back-button" onclick="window.history.back()">Go Back</button>
+
+    <!-- Species Name -->
+    <h1>{{ species_name }}</h1>
+
+    <!-- File Upload for Image -->
+    {% if image_exists == True %}
+        <img src= "{{ url_for('static', filename='images/species/' + species_name + '.jpg') }}" alt="Species Image">
+    {% else %}
+        <form id="upload-form" action="/species/{{ species_name }}" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" id="file-input">
+            <input type="submit" value="Upload">
+        </form>
+    {% endif %}
+    
+    <!-- Bottom Section -->
+    <div class="bottom-section">
+
+        <!-- Data Section -->
+        <div class="data-section">
+            <h3>Data About Species</h3>
+            <ul>
+                <li><strong>Trophic Type:</strong> {{ trophic_type }}</li>
+            </ul>
+        </div>
+
+        <!-- Table Section -->
+        <div class="table-section">
+            <h2>Populations:</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Region</th>
+                    <th>Population size</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for population in populations %}
+                    <tr>
+                        <td><a href="/population/{{population[2]}}">{{  population[0] }}</a></td>
+                        <td>{{ population[1] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        
+    </div>
+
+    <!-- JavaScript to display uploaded image -->
+    <script>
+        function handleFileSelect(evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+
+            const files = evt.dataTransfer.files;  // FileList object.
+
+            // Create a FormData object
+            const formData = new FormData();
+            formData.append('file', files[0]);
+
+            // Use fetch or XMLHttpRequest to send the FormData object to the server
+            fetch(`/species/{{ species_name }}`, {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())  // Assume server replies with json
+            .then(data => console.log(data))
+            .catch((error) => console.error('Error:', error));
+        }
+    </script>
+
+</body>
+</html>

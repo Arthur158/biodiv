@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Population Details</title>
+    <style>
+        /* General styling */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Container styling */
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* Left panel styling */
+        .left-panel {
+            flex: 1;
+            background-color: #f4f4f4;
+            padding: 20px;
+            border-right: 1px solid #ccc;
+            position: relative;
+        }
+
+        /* Header and buttons */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header button {
+            padding: 8px 12px;
+            cursor: pointer;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        /* Right panel styling */
+        .right-panel {
+            flex: 2;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        /* Image container styling */
+        .image-container {
+            height: 66%;
+            background-color: #e6e6e6;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        /* Table container styling */
+        .table-container {
+            height: 34%;
+            background-color: #ffffff;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <div class="header">
+                <h2>Population Information</h2>
+                <div>
+                    <button onclick="window.location.href='/'">Back to Home</button>
+                    <button onclick="window.location.href='/region/{{region_name}}'">Back to Region</button>
+                </div>
+            </div>
+            <p><strong><a href="/add_species">Species:</a></strong> <a href="/species/{{species_name}}"></a>{{ species_name }}</a></p>
+            <p><strong>Population Size:</strong> {{ population_size }}</p>
+            <p><strong> <a href="/add_region">Region :</a></strong><a href="/region/{{region_name}}"> {{ region_name }}</a></p>
+            <!-- Add more fields here as you wish -->
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <!-- Image container -->
+            <div class="image-container">
+                <!-- Add your image here -->
+                {% if image_exists == True %}
+                    <img src= "{{ url_for('static', filename='images/species/' + species_name + '.jpg') }}" alt="Species Image">
+                {% else %}
+                <img src="path/to/your/image.jpg" alt="Population Image">
+                {% endif %}
+            </div>
+
+            <!-- Table container -->
+            <div class="table-container">
+                <table>
+                    <!-- Add your table here -->
+                </table>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

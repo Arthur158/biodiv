@@ -103,6 +103,20 @@
             background-color: #c0392b;
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $("#randomizeName").click(function() {
+            $.ajax({
+                url: "/randomize_region_name",
+                type: "GET",
+                success: function(randomName) {
+                    $("#name").val(randomName);
+                }
+            });
+        });
+    });
+    </script>
 </head>
 <body>
     <h1>Climate Information</h1>
@@ -111,6 +125,7 @@
     <form action="/add_region" method="post">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
+        <button type="button" id="randomizeName">Randomize Name</button>
         <br>
 
         <label for="climate">Climate:</label>
@@ -143,7 +158,7 @@
             <tbody>
                 {% for region in regions %}
                 <tr>
-                    <td>{{ region[0] }}</td>
+                    <td><a href="/region/{{region[0]}}">{{ region[0] }}</a></td>
                     <td>{{ region[1] }}</td>
                 </tr>
                 {% endfor %}

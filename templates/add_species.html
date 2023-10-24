@@ -5,189 +5,181 @@
     <title>Species Form</title>
     <style>
         body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-color: #f4f4f4;
+            background-image: url("{{ url_for('static', filename='images/3.png') }}");
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
+            justify-content: space-around; /* Distribute items evenly */
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            background-image: url("{{ url_for('static', filename='images/3.png') }}");
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-        h1, h2, form, .back-btn {
-            flex-shrink: 0;
-        }
-
-        .results {
-            flex-grow: 1;
-            max-width: 500px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-        }
-
-        /* ... (rest of your styles unchanged) ... */
-
-    </style>
-</head>
-<body>
-    <!-- ... (rest of your HTML content unchanged) ... -->
-</body>
-</html>
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Species Form</title>
-    <style>
-        body {
-            background-image: url("{{ url_for('static', filename='images/3.png') }}");
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
         }
 
         h1, h2 {
-            text-align: center;
-            color: #333;
+            margin-bottom: 10px;
         }
 
         form {
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 300px;
         }
 
-        label {
-            display: block;
-            margin-bottom: 10px;
-            color: #555;
-        }
-
-        input[type="text"], select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        input[type="submit"] {
-            background-color: #3498db;
-            color: #ffffff;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #2980b9;
+        form label {
+            margin-bottom: 5px;
         }
 
         .results {
-            max-width: 500px;
-            margin: 20px auto;
+            width: 500px;
+            max-height: 300px; /* Set a fixed height */
+            overflow-y: auto;  /* Make it scrollable */
+            margin: 20px 0;
             padding: 20px;
             background-color: #ffffff;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         table {
-            border-collapse: collapse;
             width: 100%;
-            margin: 20px 0;
-            border: 1px solid #ddd;
-            background-color: #ffffff;
+            border-collapse: collapse;
         }
 
         th, td {
+            padding: 10px;
             border-bottom: 1px solid #ddd;
-            padding: 8px 12px;
-            text-align: left;
         }
 
         th {
             background-color: #f2f2f2;
         }
 
-        tr:hover {
-            background-color: #f5f5f5;
+        #back-btn {
+            display: inline-block;
+            text-decoration: none;
+            background-color: #3498db;
+            color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
         }
 
-        .checkbox-group {
-            display: inline-block;
-            margin-right: 10px;
+        a:hover {
+            background-color: #2980b9;
         }
-        .back-btn {
-            display: block;
-            width: 150px;
-            margin: 20px auto;
-            padding: 10px;
+        #slider-container {
             text-align: center;
-            background-color: #e74c3c;
-            color: #ffffff;
-            border-radius: 4px;
-            text-decoration: none;
         }
-        .back-btn:hover {
-            background-color: #c0392b;
+
+        #slider-container span,
+        #slider-container input {
+            display: inline-block;
         }
+
+        #slider {
+            margin: 0 10px;
+        }
+
+
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $("#randomizeName").click(function() {
+            $.ajax({
+                url: "/randomize_name",
+                type: "GET",
+                success: function(randomName) {
+                    $("#name").val(randomName);
+                }
+            });
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+    const trophicTypeSelect = document.getElementById("trophic_type");
+    const sliderContainer = document.getElementById("slider-container");
+
+    trophicTypeSelect.addEventListener("change", function() {
+        if (this.value === "heterotrophic") {
+            sliderContainer.style.display = "block";
+        } else {
+            sliderContainer.style.display = "none";
+        }
+    });
+});
+
+    </script>
+    
 </head>
 <body>
     <h1>Add A Species</h1>
+    
     <form action="/add_species" method="post">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
-        <br>
+        <button type="button" id="randomizeName">Randomize Name</button>
+            <label for="trophic_type">Trophic Type:</label>
+            <select id="trophic_type" name="trophic_type">
+                <option value="heterotrophic">Heterotrophic</option>
+                <option value="autotrophic">Autotrophic</option>
+            </select>
+    
+            <div id="slider-container">
+                <span>Carnivore</span>
+                <input type="range" id="slider" name="heterotroph_level" min="0" max="100" style="vertical-align: middle;">
+                <span>Herbivore</span>
+            </div>
+            
 
-        <label>Trophic Type:</label>
-        <form method="post" action="/your_route">
-            <label><input type="checkbox" name="trophic_type" value="carnivore"> Carnivore</label>
-            <label><input type="checkbox" name="trophic_type" value="herbivore"> Herbivore</label>
-            <label><input type="checkbox" name="trophic_type" value="autotrophic"> Autotrophic</label>
-            <input type="submit" value="Submit">
-        </form>
-        <br>
-
+        <input type="submit" value="Submit">
     </form>
-
+    
     <h2>Species:</h2>
-    <div class="results">{{ results }}
+    <div class="results">
         <table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Trophic Type</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for specie in species %}
-        <tr>
-            <td>{{ specie[0] }}</td>
-            <td>{{ specie[1] }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-    </div>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Trophic Type</th>
+                    <th>Heterotroph Level</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for specie in species %}
+                <tr>
+                    <td><a href="/species/{{specie[0]}}">{{ specie[0] }}</a></td>
+                    <td>{{ specie[1] }}</td>
+                    <td>
+                        {% if specie[2] is not none %}
+                        <span style="color: green;">{{ specie[2] }}</span> / <span style="color: red;">{{ 100 - specie[2] }}</span>
+                        {% else %}
+                        N/A
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if specie[1] == "autotrophic"%}
+                        <span style="color: lightgreen;"> autotrophic</span> 
 
-    <!-- Back button to the menu -->
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="/" style="text-decoration: none; background-color: #3498db; color: #ffffff; padding: 10px 15px; border-radius: 4px;">Back to Menu</a>
-    </div>
+                        {% elif specie[2] > 75 %}
+                        <span style="color: green;"> herbivore</span> 
 
+                        {% elif specie[2] < 25 %}
+                        <span style="color: red;"> carnivore</span> 
+
+                        {% else %}
+                        <span style="color: orange;"> omnivore</span> 
+                        {% endif %}
+                        </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+    </div>
+    
+    <a href="/" id="back-btn">Back to Menu</a>
 </body>
 </html>

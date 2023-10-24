@@ -1,9 +1,11 @@
 
 import sqlite3
 
+from constants import DATABASE_NAME
+
 
 try:
-    conn = sqlite3.connect('planet.db')
+    conn = sqlite3.connect(DATABASE_NAME)
     c = conn.cursor()
     
     try:
@@ -22,8 +24,9 @@ try:
         c.execute('''
             CREATE TABLE IF NOT EXISTS species (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                trophic_type TEXT NOT NULL
+                name TEXT NOT NULL UNIQUE,
+                trophic_type TEXT NOT NULL,
+                heterotroph_level INTEGER
             );
         ''')
         print("Successfully created 'species' table.")
@@ -35,7 +38,8 @@ try:
             CREATE TABLE IF NOT EXISTS populations (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 species TEXT NOT NULL,
-                population_size INTEGER NOT NULL
+                population_size INTEGER NOT NULL,
+                region TEXT NOT NULL                
             );
         ''')
         print("Successfully created 'populations' table.")
