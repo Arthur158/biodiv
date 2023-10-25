@@ -5,81 +5,116 @@
     <title>Species Information</title>
     <style>
         /* Base styling */
-        body {
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-            padding: 0;
-        }
-        
-        /* Header section */
-        h1 {
-            margin-top: 20px;
-            font-size: 48px;
-        }
-        
-        /* Back Button */
-        .back-button {
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
+body {
+    background-image: url("{{ url_for('static', filename='images/landscape/medium/1.png') }}");
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #343a40;
+    margin: 0;
+    padding: 0;
+}
 
-        /* Image section */
-        img {
-            max-width: 100%;
-            height: auto;
-            margin: 20px;
-        }
-        
-        /* File Upload */
-        .file-upload {
-            margin: 20px;
-        }
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+}
 
-        /* Bottom section */
-        .bottom-section {
-            display: flex;
-            width: 100%;
-            justify-content: space-between;
-            padding: 20px;
-        }
+/* Back button */
+.back-button {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
 
-        /* Data section */
-        .data-section {
-            flex: 3;
-        }
-        
-        .data-section ul {
-            list-style-type: none;
-        }
+.back-button:hover {
+    background-color: #343a40;
+}
 
-        /* Table section */
-        .table-section {
-            flex: 1;
-            height: 200px; /* Adjust as needed */
-            overflow-y: scroll;
-        }
-        .back-button {
-            margin-top: 10px;
-            margin-bottom: 20px;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .back-button:hover {
-            background-color: #0056b3;
-        }
-        img {
-            max-width: 500px;  /* or whatever size you want */
-            max-height: 300px; /* or whatever size you want */
-            object-fit: contain; /* This makes sure the aspect ratio is maintained */
-        }
+/* Header section */
+h1 {
+    font-size: 2.5em;
+    margin: 20px 0;
+}
+
+/* Image & Upload Section */
+img {
+    max-width: 300px;
+    height: auto;
+    max-height: 300px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#upload-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#file-input {
+    margin: 20px 0;
+}
+
+/* Bottom section */
+.bottom-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* Data section */
+.data-section {
+    flex: 1;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.data-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.data-section ul li {
+    margin: 10px 0;
+}
+
+/* Table Section */
+.table-section {
+    flex: 1;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 20px;
+    overflow-y: auto;
+    max-height: 400px; /* Adjust this value as you see fit */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #343a40;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
     </style>
 </head>
 <body>
@@ -124,8 +159,8 @@
             <tbody>
                 {% for population in populations %}
                     <tr>
-                        <td><a href="/population/{{population[2]}}">{{  population[0] }}</a></td>
-                        <td>{{ population[1] }}</td>
+                        <td><a href="/population/{{population[2]}}">{{  population[1] }}</a></td>
+                        <td>{{ population[0] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

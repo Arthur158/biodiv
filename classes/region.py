@@ -1,4 +1,5 @@
 from classes.climate import Temperature, Humidity, Climate, infer_climate
+from constants import CLIMATE_TO_RESOURCES
 from errors import InputError
 
 class Region:
@@ -16,4 +17,5 @@ class Region:
         else:
             self.climate = infer_climate(temperature, humidity) 
         self.name = name
+        self.sunlight_available = CLIMATE_TO_RESOURCES[self.climate]
        

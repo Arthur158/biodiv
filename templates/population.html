@@ -9,6 +9,9 @@
             padding: 0;
             font-family: Arial, sans-serif;
         }
+        body {
+            background-image: url("{{ url_for('static', filename='images/landscape/medium/2.png') }}");
+        }
 
         /* Container styling */
         .container {
@@ -83,7 +86,7 @@
                     <button onclick="window.location.href='/region/{{region_name}}'">Back to Region</button>
                 </div>
             </div>
-            <p><strong><a href="/add_species">Species:</a></strong> <a href="/species/{{species_name}}"></a>{{ species_name }}</a></p>
+            <p><strong><a href="/add_species">Species:</a></strong> <a href="/species/{{species_name}}">{{ species_name }}</a></p>
             <p><strong>Population Size:</strong> {{ population_size }}</p>
             <p><strong> <a href="/add_region">Region :</a></strong><a href="/region/{{region_name}}"> {{ region_name }}</a></p>
             <!-- Add more fields here as you wish -->
