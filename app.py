@@ -13,6 +13,7 @@ from name_generator import get_random_name, get_random_region_name
 
 app = Flask(__name__)
 db_handler = DatabaseHandler()
+planet = Planet()
 
 photos = UploadSet('photos', IMAGES)
 app.config['UPLOADED_PHOTOS_DEST'] = 'uploads'
@@ -60,6 +61,8 @@ def add_species():
         return redirect(url_for('add_species'))
                 
     species = db_handler.execute_sql_query("SELECT name, trophic_type, heterotroph_level FROM species")
+
+    return render_template('add_species.html', species=species)
 
 @app.route('/region/<region>', methods=['GET', 'POST'])
 def show_region(region):
@@ -141,6 +144,18 @@ def remove_all():
     db_handler.remove_all()
 
     return "Successfully removed all entries from all tables."
+
+@app.route('/start', methods=['GET'])
+def start_simulation():
+    planet.start_simulation()
+    return "Successfully started the simulation."
+
+
+@app.route("/stop", methods=['GET'])
+def stop_simulation():
+    planet.stop_simulation()
+    return "Successfully stopped the simulation."
+
 
 if __name__ == '__main__':
     app.run(debug=True)
