@@ -11,15 +11,15 @@ class Temperature(Enum):
     low = 3
 
 class Climate(Enum):
-    tropical_rainforest = 1
-    tropical_savanna = 2
-    hot_desert = 3
-    oceanic = 4
-    mediterannean = 5
-    semi_arid = 6
-    tundra = 7
-    cold_continental = 8
-    cold_desert = 9
+    tropical_rainforest = "tropical_rainforest" 
+    tropical_savanna = "tropical_savanna"
+    hot_desert = "hot_desert"
+    oceanic = "oceanic"
+    mediterannean = "mediterannean"
+    semi_arid = "semi_arid"
+    tundra = "tundra"
+    cold_continental = "cold_continental"
+    cold_desert = "cold_desert"
 
 def infer_climate(humidity: Humidity, temperature: Temperature) -> Climate:
     climate_mapping = {

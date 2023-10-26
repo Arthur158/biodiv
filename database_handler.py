@@ -94,6 +94,23 @@ class DatabaseHandler:
         # Close the connection
         conn.close()
 
+    def insert_population(self, species: str, population_size: int, region: str) -> None:
+        # Create a database connection
+        conn = sqlite3.connect(self.db_name)
+        
+        # Create a cursor object
+        cursor = conn.cursor()
+        
+        # Create a query string
+        
+        cursor.execute("INSERT INTO populations (species, population_size, region) VALUES (?, ?, ?)", (species, population_size, region))
+        
+        # Commit the changes
+        conn.commit()
+        
+        # Close the connection
+        conn.close()
+
     def insert_species(self, species_name, trophic_type, heterotroph_level) -> None:
         # Create a database connection
         conn = sqlite3.connect(self.db_name)
@@ -123,8 +140,6 @@ class DatabaseHandler:
             
             # Commit the changes
             conn.commit()
-            print("hsdlf")
-            print("Successfully removed all entries from all tables.")
             
         except Exception as e:
             # Rollback changes in case of error

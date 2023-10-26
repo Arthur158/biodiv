@@ -5,10 +5,8 @@ import os
 import sqlite3
 
 from classes.planet import Planet
-from classes.region import Region
-from constants import DATABASE_NAME, SPECIES_IMAGE_FOLDER, STATUS_TO_STRING, STRINGS_TO_CLIMATES
+from constants import DATABASE_NAME, SPECIES_IMAGE_FOLDER
 from database_handler import DatabaseHandler
-from errors import InputError
 from name_generator import get_random_name, get_random_region_name
 
 app = Flask(__name__)
@@ -21,7 +19,7 @@ configure_uploads(app, photos)
 
 @app.route('/')
 def index():
-    return render_template('welcome.html', status=STATUS_TO_STRING[planet.status])
+    return render_template('welcome.html', status=planet.status.value)
 
 @app.route('/add_region', methods=['GET', 'POST'])
 def add_region():
@@ -40,7 +38,7 @@ def add_region():
                 
     regions = db_handler.execute_sql_query("SELECT name, climate FROM regions")
 
-    return render_template('add_region.html', regions= regions, status=STATUS_TO_STRING[planet.status])
+    return render_template('add_region.html', regions= regions, status=planet.status.value)
 
 @app.route('/add_species', methods=['GET', 'POST'])
 def add_species():
@@ -62,7 +60,7 @@ def add_species():
                 
     species = db_handler.execute_sql_query("SELECT name, trophic_type, heterotroph_level FROM species")
 
-    return render_template('add_species.html', species=species, status=STATUS_TO_STRING[planet.status])
+    return render_template('add_species.html', species=species, status= planet.status.value)
 
 @app.route('/region/<region>', methods=['GET', 'POST'])
 def show_region(region):
@@ -72,18 +70,7 @@ def show_region(region):
         name = request.form.get('species')
         population_size = request.form.get('population_size')
 
-        conn = sqlite3.connect(DATABASE_NAME)
-        cursor = conn.cursor()
-
-        try:
-            cursor.execute("INSERT INTO populations (species, population_size, region) VALUES (?, ?, ?)", (name.split("'")[1], population_size, region))
-            conn.commit()
-            msg = "population successfully added!"
-        except Exception as e:
-            conn.rollback()
-            msg = "Error occurred in insert operation: " + str(e)
-        finally:
-            conn.close()
+        db_handler.insert_population(name.split("'")[1], population_size, region)
 
         # Redirect to the same add_species page to prevent form resubmission issues
         return redirect(url_for('show_region', region=region))
@@ -91,7 +78,7 @@ def show_region(region):
 
     species = db_handler.execute_sql_query("SELECT name FROM species")
 
-    return render_template('region.html', region_name= region,  populations= populations, species=species, status=STATUS_TO_STRING[planet.status])
+    return render_template('region.html', region_name= region,  populations= populations, species=species, status=planet.status.value)
 
 @app.route('/population/<population_id>', methods=['GET'])
 def show_population(population_id):
@@ -100,7 +87,7 @@ def show_population(population_id):
 
     image_exists = os.path.exists(os.path.join(SPECIES_IMAGE_FOLDER, f"{population[0]}.jpg"))
 
-    return render_template('population.html', image_exists= image_exists, species_name = population[0], population_size = population[1], region_name = population[2], status=STATUS_TO_STRING[planet.status])
+    return render_template('population.html', image_exists= image_exists, species_name = population[0], population_size = population[1], region_name = population[2], status=planet.status.value)
 
 @app.route('/species/<species_name>', methods=['GET','POST'])
 def show_species(species_name):
@@ -110,12 +97,11 @@ def show_species(species_name):
         image.save(os.path.join(SPECIES_IMAGE_FOLDER, f"{species_name}.jpg"))
 
     species = db_handler.execute_sql_query("SELECT name, trophic_type, heterotroph_level FROM species WHERE species.name == ?", (species_name,))[0]
-    print(species)
     populations = db_handler.execute_sql_query("SELECT population_size, region, id FROM populations WHERE populations.species = ?", (species_name,))
 
     image_exists = os.path.exists(os.path.join(SPECIES_IMAGE_FOLDER, f"{species_name}.jpg"))
     
-    return render_template('species.html', image_exists = image_exists, species_name = species[0], trophic_type = species[1], heterotrophic_level=species[2], populations= populations, status=STATUS_TO_STRING[planet.status])
+    return render_template('species.html', image_exists = image_exists, species_name = species[0], trophic_type = species[1], heterotrophic_level=species[2], populations= populations, sstatus=planet.status.value)
      
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -142,6 +128,8 @@ def randomize_region_name():
 def remove_all():
     # Connect to the SQLite database
     db_handler.remove_all()
+
+    print("Successfully removed all entries from all tables.")
 
     return "Successfully removed all entries from all tables."
 
