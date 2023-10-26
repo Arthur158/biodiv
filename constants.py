@@ -1,6 +1,7 @@
 #constants
 
 from classes.climate import Climate
+from classes.status import Status
 
 
 STRINGS_TO_CLIMATES = {
@@ -26,4 +27,9 @@ CLIMATE_TO_RESOURCES = {
     Climate.cold_desert: (100,300),
     Climate.semi_arid: (100,200),
     Climate.tundra: (100,100),
+}
+STATUS_TO_STRING = {
+    Status.closed: "closed",
+    Status.paused: "paused",
+    Status.playing: "playing"
 }

@@ -85,6 +85,10 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
+
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             background-color: #f1f1f1;
         }
@@ -107,9 +111,26 @@
 </head>
 <body>
     <div id="button-bar">
-        <button class="bar-button" id="start-stop-btn">Start</button>
-        <button class="bar-button" id="play-pause-btn">Play</button>
-        <button class="bar-button" id="skip-btn" disabled>Skip</button>
+        {% if status == "closed" %}
+            <button class="bar-button" id="start-stop-btn">Start</button>
+        {% else %}
+            <button class="bar-button" id="start-stop-btn">Stop</button>
+        {% endif %}
+        {% if status == "closed" %}
+            <button class="bar-button" id="play-pause-btn" disabled>Play</button>
+        {% elif status == "paused" %}
+            <button class="bar-button" id="play-pause-btn">Play</button>
+        {% else %}
+            <button class="bar-button" id="play-pause-btn">Pause</button>
+        {% endif %}
+        <button class="bar-button" id="year-btn" style="cursor: not-allowed">Year: 0</button>
+        {% if status == "closed" %}
+            <button class="bar-button" id="skip-btn" disabled>Skip</button>
+        {% elif status == "paused" %}
+            <button class="bar-button" id="skip-btn">Skip</button>
+        {% else %}
+            <button class="bar-button" id="skip-btn" disabled>Skip</button>
+        {% endif %}
         <button class="bar-button" id="back-btn">Back</button>
         <button class="bar-button" id="menu-btn">Menu</button>
       </div>
@@ -192,15 +213,24 @@
                 });
             });
             $("#start-stop-btn").click(function() {
-                startStopButton = document.getElementById('start-stop-btn')
+                startStopButton = document.getElementById('start-stop-btn');
+                const playPauseBtn = document.getElementById('play-pause-btn');
+                const skipBtn = document.getElementById('skip-btn');
+
+
                 if(startStopButton.textContent === "Start"){
-                    startStopButton.textContent = "Stop"
+                    startStopButton.textContent = "Stop";
+                    playPauseBtn.disabled = false;
+                    skipBtn.disabled = false;
                     $.ajax({
                         url: "/start",
                         type: "GET",
                     });
                 } else {
+                    skipBtn.disabled = true;
+                    playPauseBtn.disabled = true;
                     startStopButton.textContent = "Start"
+                    playPauseBtn.textContent = "Start"
                     $.ajax({
                         url: "/stop",
                         type: "GET",

@@ -6,7 +6,7 @@ import sqlite3
 
 from classes.planet import Planet
 from classes.region import Region
-from constants import DATABASE_NAME, SPECIES_IMAGE_FOLDER, STRINGS_TO_CLIMATES
+from constants import DATABASE_NAME, SPECIES_IMAGE_FOLDER, STATUS_TO_STRING, STRINGS_TO_CLIMATES
 from database_handler import DatabaseHandler
 from errors import InputError
 from name_generator import get_random_name, get_random_region_name
@@ -21,7 +21,7 @@ configure_uploads(app, photos)
 
 @app.route('/')
 def index():
-    return render_template('welcome.html')
+    return render_template('welcome.html', status=STATUS_TO_STRING[planet.status])
 
 @app.route('/add_region', methods=['GET', 'POST'])
 def add_region():
@@ -40,7 +40,7 @@ def add_region():
                 
     regions = db_handler.execute_sql_query("SELECT name, climate FROM regions")
 
-    return render_template('add_region.html', regions= regions)
+    return render_template('add_region.html', regions= regions, status=STATUS_TO_STRING[planet.status])
 
 @app.route('/add_species', methods=['GET', 'POST'])
 def add_species():
@@ -62,7 +62,7 @@ def add_species():
                 
     species = db_handler.execute_sql_query("SELECT name, trophic_type, heterotroph_level FROM species")
 
-    return render_template('add_species.html', species=species)
+    return render_template('add_species.html', species=species, status=STATUS_TO_STRING[planet.status])
 
 @app.route('/region/<region>', methods=['GET', 'POST'])
 def show_region(region):
@@ -91,7 +91,7 @@ def show_region(region):
 
     species = db_handler.execute_sql_query("SELECT name FROM species")
 
-    return render_template('region.html', region_name= region,  populations= populations, species=species)
+    return render_template('region.html', region_name= region,  populations= populations, species=species, status=STATUS_TO_STRING[planet.status])
 
 @app.route('/population/<population_id>', methods=['GET'])
 def show_population(population_id):
@@ -100,7 +100,7 @@ def show_population(population_id):
 
     image_exists = os.path.exists(os.path.join(SPECIES_IMAGE_FOLDER, f"{population[0]}.jpg"))
 
-    return render_template('population.html', image_exists= image_exists, species_name = population[0], population_size = population[1], region_name = population[2])
+    return render_template('population.html', image_exists= image_exists, species_name = population[0], population_size = population[1], region_name = population[2], status=STATUS_TO_STRING[planet.status])
 
 @app.route('/species/<species_name>', methods=['GET','POST'])
 def show_species(species_name):
@@ -115,7 +115,7 @@ def show_species(species_name):
 
     image_exists = os.path.exists(os.path.join(SPECIES_IMAGE_FOLDER, f"{species_name}.jpg"))
     
-    return render_template('species.html', image_exists = image_exists, species_name = species[0], trophic_type = species[1], heterotrophic_level=species[2], populations= populations)
+    return render_template('species.html', image_exists = image_exists, species_name = species[0], trophic_type = species[1], heterotrophic_level=species[2], populations= populations, status=STATUS_TO_STRING[planet.status])
      
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
