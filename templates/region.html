@@ -130,11 +130,7 @@
 </head>
 <body>
     <div id="button-bar">
-        {% if status == "closed" %}
-            <button class="bar-button" id="start-stop-btn">Start</button>
-        {% else %}
-            <button class="bar-button" id="start-stop-btn">Stop</button>
-        {% endif %}
+        <button class="bar-button" id="save-btn">Save</button>
         {% if status == "closed" %}
             <button class="bar-button" id="play-pause-btn" disabled>Play</button>
         {% elif status == "paused" %}
@@ -142,7 +138,7 @@
         {% else %}
             <button class="bar-button" id="play-pause-btn">Pause</button>
         {% endif %}
-        <button class="bar-button" id="year-btn" style="cursor: not-allowed">Year: 0</button>
+        <button class="bar-button" id="year-btn" style="cursor: not-allowed">Year: {{year}}</button>
         {% if status == "closed" %}
             <button class="bar-button" id="skip-btn" disabled>Skip</button>
         {% elif status == "paused" %}
@@ -167,8 +163,8 @@
             <tbody>
                 {% for population in populations %}
                     <tr>
-                        <td><a href="/population/{{population[4]}}">{{  population[1] }}</a></td>
-                        <td>{{ population[0] }}</td>
+                        <td><a href="/population/{{region_name}}/{{population[0]}}">{{  population[0] }}</a></td>
+                        <td>{{ population[1] }}</td>
                         <td>
                         {% if population[2] == "autotrophic"%}
                         <span style="color: lightgreen;"> autotrophic</span> 
@@ -201,7 +197,7 @@
             <label for="population_size">Population Size:</label>
             <input type="number" id="population_size" name="population_size" required>
             
-            <input type="submit" value="Add Population">
+            <input type="submit" id="submit-pop" value="Add Population">
         </form>
     </div>
 
@@ -211,43 +207,37 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            $("#start-stop-btn").click(function() {
-                startStopButton = document.getElementById('start-stop-btn');
-                const playPauseBtn = document.getElementById('play-pause-btn');
-                const skipBtn = document.getElementById('skip-btn');
-
-
-                if(startStopButton.textContent === "Start"){
-                    startStopButton.textContent = "Stop";
-                    playPauseBtn.disabled = false;
-                    skipBtn.disabled = false;
-                    $.ajax({
-                        url: "/start",
-                        type: "GET",
-                    });
-                } else {
-                    skipBtn.disabled = true;
-                    playPauseBtn.disabled = true;
-                    startStopButton.textContent = "Start"
-                    playPauseBtn.textContent = "Play"
-                    $.ajax({
-                        url: "/stop",
-                        type: "GET",
-                    });
-                }
+            $("#save-btn").click(function() {
+                $.ajax({
+                    url: "/save",
+                    type: "GET",
+                });
             });
-        });
-        const playPauseBtn = document.getElementById('play-pause-btn');
-        const skipBtn = document.getElementById('skip-btn');
-    
-        playPauseBtn.addEventListener('click', function() {
-        if (playPauseBtn.textContent === 'Play') {
-            playPauseBtn.textContent = 'Pause';
-            skipBtn.disabled = true;
-        } else {
-            playPauseBtn.textContent = 'Play';
-            skipBtn.disabled = false;
-        }
+            $("#skip-btn").click(function() {
+                $.ajax({
+                    url: "/skip",
+                    type: "GET",
+                    success: function(response) {
+                        location.reload();
+                    }
+                });
+            });
+            $('#submit-pop').click(function() {
+                var population_size = $('#population_size').val();
+                var species = $('#species').val().split("'")[1];
+                $.ajax({
+                    url: "/region/add",
+                    type: "POST",
+                    data: {
+                        region_name: "{{region_name}}",
+                        species: species,
+                        population_size: population_size
+                    },
+                    success: function(response) {
+                        location.reload();
+                    }
+                });
+            })
         });
         document.getElementById("back-btn").addEventListener("click", function() {
             window.history.back();

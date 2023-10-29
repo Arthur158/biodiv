@@ -45,7 +45,8 @@ class DatabaseHandler:
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         species TEXT NOT NULL,
                         population_size INTEGER NOT NULL,
-                        region TEXT NOT NULL                
+                        region TEXT NOT NULL,
+                        UNIQUE (species, region)
                     );
                 ''')
                 print("Successfully created 'populations' table.")
@@ -121,6 +122,23 @@ class DatabaseHandler:
         # Create a query string
         
         cursor.execute("INSERT INTO species (name, trophic_type, heterotroph_level) VALUES (?, ?, ?)", (species_name, trophic_type, heterotroph_level))
+        
+        # Commit the changes
+        conn.commit()
+        
+        # Close the connection
+        conn.close()
+
+    def delete_population(self, region_name, species_name):
+                # Create a database connection
+        conn = sqlite3.connect(self.db_name)
+        
+        # Create a cursor object
+        cursor = conn.cursor()
+        
+        # Create a query string
+        
+        cursor.execute("DELETE FROM populations WHERE species = ? and region = ?", (species_name, region_name))
         
         # Commit the changes
         conn.commit()

@@ -99,11 +99,7 @@
 </head>
 <body>
     <div id="button-bar">
-        {% if status == "closed" %}
-            <button class="bar-button" id="start-stop-btn">Start</button>
-        {% else %}
-            <button class="bar-button" id="start-stop-btn">Stop</button>
-        {% endif %}
+        <button class="bar-button" id="save-btn">Save</button>
         {% if status == "closed" %}
             <button class="bar-button" id="play-pause-btn" disabled>Play</button>
         {% elif status == "paused" %}
@@ -111,7 +107,7 @@
         {% else %}
             <button class="bar-button" id="play-pause-btn">Pause</button>
         {% endif %}
-        <button class="bar-button" id="year-btn" style="cursor: not-allowed">Year: 0</button>
+        <button class="bar-button" id="year-btn" style="cursor: not-allowed">Year: {{year}}</button>
         {% if status == "closed" %}
             <button class="bar-button" id="skip-btn" disabled>Skip</button>
         {% elif status == "paused" %}
@@ -132,19 +128,16 @@
             <p><strong><a href="/add_species">Species:</a></strong> <a href="/species/{{species_name}}">{{ species_name }}</a></p>
             <p><strong>Population Size:</strong> {{ population_size }}</p>
             <p><strong> <a href="/add_region">Region :</a></strong><a href="/region/{{region_name}}"> {{ region_name }}</a></p>
-            <!-- Add more fields here as you wish -->
+            <button id="delete-btn">Delete</button>
         </div>
 
         <!-- Right Panel -->
         <div class="right-panel">
             <!-- Image container -->
             <div class="image-container">
-                <!-- Add your image here -->
-                {% if image_exists == True %}
-                    <img src= "{{ url_for('static', filename='images/species/' + species_name + '.jpg') }}" alt="Species Image">
-                {% else %}
-                <img src="path/to/your/image.jpg" alt="Population Image">
-                {% endif %}
+
+                <img src= "{{ url_for('static', filename='images/species/' + species_name + '.jpg') }}" alt="Species Image">
+
             </div>
 
             <!-- Table container -->
@@ -158,43 +151,29 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            $("#start-stop-btn").click(function() {
-                startStopButton = document.getElementById('start-stop-btn');
-                const playPauseBtn = document.getElementById('play-pause-btn');
-                const skipBtn = document.getElementById('skip-btn');
-
-
-                if(startStopButton.textContent === "Start"){
-                    startStopButton.textContent = "Stop";
-                    playPauseBtn.disabled = false;
-                    skipBtn.disabled = false;
-                    $.ajax({
-                        url: "/start",
-                        type: "GET",
-                    });
-                } else {
-                    skipBtn.disabled = true;
-                    playPauseBtn.disabled = true;
-                    startStopButton.textContent = "Start"
-                    playPauseBtn.textContent = "Start"
-                    $.ajax({
-                        url: "/stop",
-                        type: "GET",
-                    });
-                }
+            $("#save-btn").click(function() {
+                $.ajax({
+                    url: "/save",
+                    type: "GET",
+                });
             });
-        });
-        const playPauseBtn = document.getElementById('play-pause-btn');
-        const skipBtn = document.getElementById('skip-btn');
-    
-        playPauseBtn.addEventListener('click', function() {
-        if (playPauseBtn.textContent === 'Play') {
-            playPauseBtn.textContent = 'Pause';
-            skipBtn.disabled = true;
-        } else {
-            playPauseBtn.textContent = 'Play';
-            skipBtn.disabled = false;
-        }
+            $("#skip-btn").click(function() {
+                $.ajax({
+                    url: "/skip",
+                    type: "GET",
+                    success: function(response) {
+                        location.reload();
+                    }
+                });
+            });
+            $("#delete-btn").click(function() {
+                $.ajax({
+                    url: "/delete/{{region_name}}/{{species_name}}",
+                    success: function(response) {
+                        window.location.href = "/region/{{region_name}}";
+                    }
+                })
+            })
         });
         document.getElementById("back-btn").addEventListener("click", function() {
             window.history.back();

@@ -111,11 +111,7 @@
 </head>
 <body>
     <div id="button-bar">
-        {% if status == "closed" %}
-            <button class="bar-button" id="start-stop-btn">Start</button>
-        {% else %}
-            <button class="bar-button" id="start-stop-btn">Stop</button>
-        {% endif %}
+        <button class="bar-button" id="save-btn">Save</button>
         {% if status == "closed" %}
             <button class="bar-button" id="play-pause-btn" disabled>Play</button>
         {% elif status == "paused" %}
@@ -123,7 +119,7 @@
         {% else %}
             <button class="bar-button" id="play-pause-btn">Pause</button>
         {% endif %}
-        <button class="bar-button" id="year-btn" style="cursor: not-allowed">Year: 0</button>
+        <button class="bar-button" id="year-btn" style="cursor: not-allowed">Year: {{year}}</button>
         {% if status == "closed" %}
             <button class="bar-button" id="skip-btn" disabled>Skip</button>
         {% elif status == "paused" %}
@@ -212,30 +208,20 @@
                     }
                 });
             });
-            $("#start-stop-btn").click(function() {
-                startStopButton = document.getElementById('start-stop-btn');
-                const playPauseBtn = document.getElementById('play-pause-btn');
-                const skipBtn = document.getElementById('skip-btn');
-
-
-                if(startStopButton.textContent === "Start"){
-                    startStopButton.textContent = "Stop";
-                    playPauseBtn.disabled = false;
-                    skipBtn.disabled = false;
-                    $.ajax({
-                        url: "/start",
-                        type: "GET",
-                    });
-                } else {
-                    skipBtn.disabled = true;
-                    playPauseBtn.disabled = true;
-                    startStopButton.textContent = "Start"
-                    playPauseBtn.textContent = "Play"
-                    $.ajax({
-                        url: "/stop",
-                        type: "GET",
-                    });
-                }
+            $("#save-btn").click(function() {
+                $.ajax({
+                    url: "/save",
+                    type: "GET",
+                });
+            });
+            $("#skip-btn").click(function() {
+                $.ajax({
+                    url: "/skip",
+                    type: "GET",
+                    success: function(response) {
+                        location.reload();
+                    }
+                });
             });
         });
         document.addEventListener("DOMContentLoaded", function() {
