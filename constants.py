@@ -1,29 +1,18 @@
 #constants
 
 from classes.climate import Climate
+from classes.status import Status
 
-
-STRINGS_TO_CLIMATES = {
-    "tropical_rainforest": Climate.tropical_rainforest,
-    "tropical_savanna": Climate.tropical_savanna ,
-    "hot_desert": Climate.hot_desert ,
-    "oceanic": Climate.oceanic ,
-    "mediterannean": Climate.mediterannean ,
-    "cold_continental": Climate.cold_continental,
-    "cold_desert": Climate.cold_desert,
-    "semi_arid": Climate.semi_arid,
-    "tundra": Climate.tundra,
-}
 DATABASE_NAME = "planet.db"
 SPECIES_IMAGE_FOLDER = "static/images/species"
 CLIMATE_TO_RESOURCES = {
-    Climate.tropical_rainforest: (300,300),
-    Climate.tropical_savanna: (300,200),
-    Climate.hot_desert: (300,100),
-    Climate.oceanic: (200,300),
-    Climate.mediterannean: (200,200),
-    Climate.cold_continental: (200,100),
-    Climate.cold_desert: (100,300),
-    Climate.semi_arid: (100,200),
-    Climate.tundra: (100,100),
+    Climate.tropical_rainforest: (300000,300000),
+    Climate.tropical_savanna: (300000,200000),
+    Climate.hot_desert: (300000,100000),
+    Climate.oceanic: (200000,300000),
+    Climate.mediterannean: (200000,200000),
+    Climate.cold_continental: (200000,100000),
+    Climate.cold_desert: (100000,300000),
+    Climate.semi_arid: (100000,200000),
+    Climate.tundra: (100000,100000),
 }
