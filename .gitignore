@@ -1,9 +1,40 @@
-# Ignore Python compiled files
+# Byte-compiled / optimized / DLL files from Python
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
 
-# Ignore virtual environment
+# Databases
+*.db
+
+# Virtual environment
 venv/
 
-# Ignore IDE-specific files (for example, PyCharm)
-.idea/
+# Configuration files (be careful if there are configurations you want to keep)
+*.cfg
+*.ini
+
+# IDE and Editor folders
+*.idea/
+.vscode/  # If you use VSCode, though it's not in the list
+
+# Uploads (assuming users might upload files here)
+uploads/
+
+# Any secrets or credentials file (not shown in the list, but always good to mention)
+secrets.yaml
+credentials.json
+
+# Log files (if any)
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Other common unwanted files
+*.swp  # Swap files from Vim and other text editors
+*.swo  # Swap files from Vim and other text editors
+.DS_Store  # macOS folder config file
+Thumbs.db  # Windows image file cache
