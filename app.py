@@ -26,6 +26,7 @@ def index():
 
 @app.route('/add_region', methods=['GET', 'POST'])
 def add_region():
+
     if request.method == 'POST':
         name = request.form.get('name')
         climate = request.form.get('climate')
@@ -34,7 +35,7 @@ def add_region():
             planet.add_region(Region(name, Climate(climate)))
             return redirect(url_for('add_region'))
         
-    regions= [(region.name, region.climate.value) for region in planet.regions.values()]
+    regions= planet.db_handler.execute_sql_query("SELECT name, climate FROM regions")
 
     return render_template('add_region.html', regions=regions, status=planet.status.value, year=planet.year)
 
@@ -50,17 +51,8 @@ def add_species():
             if trophic_type == 'heterotrophic':
                 heterotroph_level = request.form.get('heterotroph_level')
 
-            planet.add_species(Species(name, Trophic_type(trophic_type), heterotroph_level))
+            planet.db_handler.insert_species(name,trophic_type, heterotroph_level)
             return redirect(url_for('add_species'))
-
-    # species = [
-    #     (
-    #         specie.name, 
-    #         specie.trophic_type.value, 
-    #         int(specie.heterotroph_level) if specie.heterotroph_level is not None else None
-    #     ) 
-    #     for specie in planet.species.values()
-    # ]
 
     species = planet.db_handler.execute_sql_query("SELECT name,trophic_type,heterotroph_level FROM species")
     return render_template('add_species.html', species=species, status=planet.status.value, year=planet.year)
@@ -69,25 +61,9 @@ def add_species():
 @app.route('/region/<region_name>', methods=['GET', 'POST'])
 def show_region(region_name):
 
-    # breakpoint()
-    region = planet.regions.get(region_name)
-    if not region:
-        return "Region not found", 404
+    region = planet.db_handler.execute_sql_query("SELECT name, climate FROM regions WHERE regions.name = ?", (region_name))
+    #for future uses.
 
-
-    # species_names = [specie.name for specie in planet.species.values()]
-
-    # populations = [
-    #     (
-    #         population.species.name, 
-    #         population.population_size, 
-    #         population.species.trophic_type.value, 
-    #         int(population.species.heterotroph_level) if population.species.heterotroph_level is not None else None
-    #     ) 
-    #     for population in region.populations.values()
-    # ]
-
-    # breakpoint()
     populations = planet.db_handler.execute_sql_query("SELECT populations.species, populations.population_size, species.trophic_type, species.heterotroph_level, populations.id FROM populations JOIN species ON species.name == populations.species WHERE populations.region = ?", (region_name,))
 
     species_names = planet.db_handler.execute_sql_query("SELECT name FROM species")
@@ -109,9 +85,9 @@ def register_population():
 
 @app.route('/species/<species_name>', methods=['GET', 'POST'])
 def show_species(species_name):
-    species = planet.species.get(species_name)
-    if not species:
-        return "Species not found", 404
+
+    species = planet.db_handler.execute_sql_query("SELECT name, trophic_type, heterotroph_level FROM species WHERE species.name == ?", (species_name,))[0]
+    populations = planet.db_handler.execute_sql_query("SELECT population_size, region, id FROM populations WHERE populations.species = ?", (species_name,))
 
     if request.method == 'POST':
         image = request.files['file']
@@ -119,29 +95,29 @@ def show_species(species_name):
 
     image_exists = os.path.exists(os.path.join(SPECIES_IMAGE_FOLDER, f"{species_name}.jpg"))
 
-    return render_template('species.html', image_exists=image_exists, species_name=species.name, trophic_type=species.trophic_type.value, heterotrophic_level=species.heterotroph_level, status=planet.status.value, year=planet.year)
+    return render_template('species.html', populations= populations, image_exists=image_exists, species_name=species_name, trophic_type=species[1], heterotrophic_level=species[2], status=planet.status.value, year=planet.year)
 
 
 @app.route('/population/<region_name>/<species_name>', methods=['GET'])
 def show_population(region_name, species_name):
 
-    population: Population = planet.regions.get(region_name).populations.get(species_name)
+    population = planet.db_handler.execute_sql_query("SELECT species, population_size, region FROM populations WHERE populations.region = ? AND populations.species = ?", (region_name, species_name))[0]
+    
+    image_exists = os.path.exists(os.path.join(SPECIES_IMAGE_FOLDER, f"{population[0]}.jpg"))
 
-    image_exists = os.path.exists(os.path.join(SPECIES_IMAGE_FOLDER, f"{population.species.name}.jpg"))
-
-    return render_template('population.html', image_exists= image_exists, species_name = population.species.name, population_size = population.population_size, region_name = region_name, status=planet.status.value)
+    return render_template('population.html', image_exists= image_exists, species_name = population[0], population_size = population[1], region_name = region_name, status=planet.status.value)
 
 
 @app.route('/delete/<region_name>/<species_name>', methods=['GET'])
 def delete_population(region_name, species_name):
 
-    planet.regions.get(region_name).populations.pop(species_name)
     planet.db_handler.delete_population(region_name, species_name)
 
     return f"Successfully removed population of {species_name} from the region {region_name}."
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
+
     if request.method == 'POST' and 'photo' in request.files:
         filename = photos.save(request.files['photo'])
         return redirect(url_for('show', filename=filename))
@@ -173,27 +149,18 @@ def save_simulation():
 @app.route("/skip", methods=['GET'])
 def skip():
 
-    planet.empty_out()
     planet.get_from_database()
-
-    # breakpoint()
-
 
     planet.execute_generation()
 
-    # breakpoint()
-
     planet.save_simulation()
-    planet.get_from_database()
     
-    # breakpoint()
-
     return "Successfully executed a generation"
 
 @app.route("/remove-all", methods=['GET'])
 def remove_all():
+
     planet.db_handler.remove_all()
-    planet.start_simulation()
     return "Succesfullly removed all tables"
 
 if __name__ == '__main__':

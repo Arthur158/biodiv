@@ -201,7 +201,7 @@ th, td {
             <tbody>
                 {% for population in populations %}
                     <tr>
-                        <td><a href="/population/{{population[2]}}">{{  population[1] }}</a></td>
+                        <td><a href="/population/{{population[1]}}/{{species_name}}">{{  population[1] }}</a></td>
                         <td>{{ population[0] }}</td>
                     </tr>
                 {% endfor %}
