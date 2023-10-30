@@ -1,7 +1,8 @@
 import math
 from typing import Dict, List
+from classes.autotroph_species import AutotrophSpecies
 from classes.climate import Climate
-from classes.diet import Trophic_type
+from classes.heterotroph_species import HeterotrophSpecies
 from classes.population import Population
 from classes.region import Region
 from classes.species import Species
@@ -27,7 +28,12 @@ class Planet:
         
         # Fetch species and regions from the database
         species_data = self.db_handler.execute_sql_query("SELECT name, trophic_type, heterotroph_level FROM species")
-        self.species = {specie[0]: Species(specie[0], Trophic_type(specie[1]), specie[2]) for specie in species_data}
+
+        for specie_data in species_data:
+            if(specie_data[1] == "autotrophic"):
+                self.species[specie_data[0]] = AutotrophSpecies(specie_data[0])
+            elif(specie_data[1] == "heterotrophic"):
+                self.species[specie_data[0]] = HeterotrophSpecies(specie_data[0], specie_data[2])
 
         region_data = self.db_handler.execute_sql_query("SELECT name, climate FROM regions")
         self.regions = {region[0]: Region(region[0], Climate(region[1])) for region in region_data}
@@ -48,7 +54,10 @@ class Planet:
 
         # Save species to the database
         for species in self.species.values():
-            self.db_handler.insert_species(species.name, species.trophic_type.value, species.heterotroph_level)
+            if isinstance(species, AutotrophSpecies):
+                self.db_handler.insert_species(species.name, "autotrophic", None)
+            if isinstance(species, HeterotrophSpecies):
+                self.db_handler.insert_species(species.name, "heterotrophic", species.heterotroph_level)
 
         # Save regions and their populations to the database
         for region in self.regions.values():
@@ -77,8 +86,8 @@ class Planet:
 
     def _categorize_populations(self, region):
         """Categorize populations based on their trophic type."""
-        autotrophic_populations = [population for population in region.populations.values() if population.species.trophic_type == Trophic_type.autotrophic]
-        heterotrophic_populations = [population for population in region.populations.values() if population.species.trophic_type == Trophic_type.heterotrophic]
+        autotrophic_populations = [population for population in region.populations.values() if isinstance(population.species, AutotrophSpecies)]
+        heterotrophic_populations = [population for population in region.populations.values() if isinstance(population.species, HeterotrophSpecies)]
         
         # Herbivorous populations have heterotroph_level greater than 0 but less than 100
         herbivorous_populations = [population for population in heterotrophic_populations if 0 < population.species.heterotroph_level]
@@ -145,7 +154,7 @@ class Planet:
 
                 ratio: float = 0
 
-                if(population.species.trophic_type == Trophic_type.heterotrophic and population.species.heterotroph_level is not None):
+                if isinstance(population.species, HeterotrophSpecies):
 
                     ratio_grass, ratio_meat = 0.0, 0.0
 
@@ -166,7 +175,7 @@ class Planet:
 
                     ratio =  (min(1, ratio_meat) * (100 - population.species.heterotroph_level) + min(1 ,ratio_grass) * population.species.heterotroph_level) / 100
 
-                else:
+                elif isinstance(population.species, AutotrophSpecies):
                     ratio = min(population.food_collected / (population.population_size * population.species.cost), 1.0)
 
                 population.growth_factor *= ratio * 1.2

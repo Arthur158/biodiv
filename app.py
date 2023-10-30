@@ -2,7 +2,6 @@ from flask import Flask, jsonify, request, render_template, redirect, url_for, s
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 import os
 from classes.climate import Climate
-from classes.diet import Trophic_type
 
 from classes.planet import Planet
 from classes.population import Population
