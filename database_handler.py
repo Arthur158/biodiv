@@ -38,6 +38,36 @@ class DatabaseHandler:
                 print("Successfully created 'species' table.")
             except sqlite3.OperationalError as e:
                 print("Could not create 'species' table:", e)
+            try:
+                cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS heterotroph_species (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name TEXT NOT NULL UNIQUE,
+                        armor INTEGER,
+                        speed INTEGER,
+                        strength INTEGER,
+                        digestive_strength INTEGER,
+                        height INTEGER
+                    );
+                ''')
+                print("Successfully created 'heterotroph_species' table.")
+            except sqlite3.OperationalError as e:
+                print("Could not create 'heterotroph_species' table:", e)
+
+            try:
+                cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS autotroph_species (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        name TEXT NOT NULL UNIQUE,
+                        toxicity INTEGER,
+                        height INTEGER,
+                        depth_of_roots INTEGER,
+                        size_of_leaves INTEGER
+                    );
+                ''')
+                print("Successfully created 'autotroph_species' table.")
+            except sqlite3.OperationalError as e:
+                print("Could not create 'autotroph_species' table:", e)
 
             try:
                 cursor.execute('''
@@ -112,7 +142,7 @@ class DatabaseHandler:
         # Close the connection
         conn.close()
 
-    def insert_species(self, species_name, trophic_type, heterotroph_level) -> None:
+    def insert_autotroph_species(self, species_name, toxicity = 100, height = 100, depth_of_roots = 100, size_of_leaves = 100) -> None:
         # Create a database connection
         conn = sqlite3.connect(self.db_name)
         
@@ -121,7 +151,28 @@ class DatabaseHandler:
         
         # Create a query string
         
-        cursor.execute("INSERT INTO species (name, trophic_type, heterotroph_level) VALUES (?, ?, ?)", (species_name, trophic_type, heterotroph_level))
+        cursor.execute("INSERT INTO species (name, trophic_type, heterotroph_level) VALUES (?, ?, ?)", (species_name, "autotrophic", None))
+
+        cursor.execute("INSERT INTO autotroph_species (name, toxicity, height, depth_of_roots, size_of_leaves) VALUES (?, ?, ?, ?, ?)", (species_name, toxicity, height, depth_of_roots, size_of_leaves))
+        
+        # Commit the changes
+        conn.commit()
+        
+        # Close the connection
+        conn.close()
+
+    def insert_heterotroph_species(self, species_name, heterotroph_level, armor = 100, speed = 100, strength = 100, digestive_strengh = 100, height = 100) -> None:
+        # Create a database connection
+        conn = sqlite3.connect(self.db_name)
+        
+        # Create a cursor object
+        cursor = conn.cursor()
+        
+        # Create a query string
+        
+        cursor.execute("INSERT INTO species (name, trophic_type, heterotroph_level) VALUES (?, ?, ?)", (species_name, "heterotrophic", heterotroph_level))
+
+        cursor.execute("INSERT INTO species (name, armor, speed, strength, digestive_strength, height) VALUES (?, ?, ?, ?, ?, ?)", (species_name, armor, speed, strength, digestive_strengh, height))
         
         # Commit the changes
         conn.commit()

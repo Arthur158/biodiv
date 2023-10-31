@@ -16,8 +16,9 @@ class Planet:
         """Initialize the Planet class with default values."""
         self.status = Status.closed
         self.regions: Dict[str, Region] = {}
-        self.species: Dict[str, Region] = {}
+        self.species: Dict[str, Species] = {}
         self.db_handler = DatabaseHandler(database_name)
+        self.db_handler.create_table()
         self.year = 0
         
 
@@ -34,6 +35,17 @@ class Planet:
                 self.species[specie_data[0]] = AutotrophSpecies(specie_data[0])
             elif(specie_data[1] == "heterotrophic"):
                 self.species[specie_data[0]] = HeterotrophSpecies(specie_data[0], specie_data[2])
+
+        autotroph_species_data = self.db_handler.execute_sql_query("SELECT name, toxicity, height, depth_of_roots, size_of_leaves FROM autotroph_species")
+
+        for autotroph_specie_data in autotroph_species_data:
+            self.species.get(autotroph_specie_data[0]).update_stats(autotroph_specie_data[1], autotroph_specie_data[2], autotroph_specie_data[3], autotroph_specie_data[4])
+
+        heterotroph_species_data = self.db_handler.execute_sql_query("SELECT name, armor, speed, strength, digestive_strength, height FROM heterotroph_species")
+
+        for heterotroph_specie_data in heterotroph_species_data:
+            self.species.get(heterotroph_specie_data[0]).update_stats(heterotroph_specie_data[1], heterotroph_specie_data[2], heterotroph_specie_data[3], heterotroph_specie_data[4], heterotroph_specie_data[5])
+
 
         region_data = self.db_handler.execute_sql_query("SELECT name, climate FROM regions")
         self.regions = {region[0]: Region(region[0], Climate(region[1])) for region in region_data}
@@ -55,9 +67,9 @@ class Planet:
         # Save species to the database
         for species in self.species.values():
             if isinstance(species, AutotrophSpecies):
-                self.db_handler.insert_species(species.name, "autotrophic", None)
+                self.db_handler.insert_autotroph_species(species.name, species.toxicity, species.height, species.depth_of_roots, species.size_of_leaves)
             if isinstance(species, HeterotrophSpecies):
-                self.db_handler.insert_species(species.name, "heterotrophic", species.heterotroph_level)
+                self.db_handler.insert_heterotroph_species(species.name, "heterotrophic", species.heterotroph_level, species.armor, species.speed, species.strength, species.digestive_strength, species.height)
 
         # Save regions and their populations to the database
         for region in self.regions.values():
@@ -101,15 +113,19 @@ class Planet:
     def _distribute_food_to_autotrophs(self, region, autotrophic_populations):
         """Distribute food among autotrophic populations based on their gathering power."""
         resources = CLIMATE_TO_RESOURCES[Climate(region.climate)]
-        total_resources = sum(resources)
         
+        #first, share resources from light.
+        pool = resources[0]
+
         # Calculate the total gathering power of all autotrophic populations
         total_gathering_power = sum([population.population_size * population.species.effectiveness[0] for population in autotrophic_populations])
         
         # Distribute resources based on each population's proportion of the total gathering power
         for population in autotrophic_populations:
             population_gathering_power = population.population_size * population.species.effectiveness[0]
-            population.food_collected += total_resources * (population_gathering_power / total_gathering_power)
+            population.food_collected += pool * (population_gathering_power / total_gathering_power)
+
+        pool = resources[1]
 
     def _distribute_food_to_herbivores(self, autotrophic_populations, herbivorous_populations):
         """Distribute food among herbivorous populations."""
