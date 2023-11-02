@@ -161,7 +161,7 @@ class DatabaseHandler:
         # Close the connection
         conn.close()
 
-    def insert_heterotroph_species(self, species_name, heterotroph_level, armor = 100, speed = 100, strength = 100, digestive_strengh = 100, height = 100) -> None:
+    def insert_heterotroph_species(self, species_name, heterotroph_level, armor = 100, speed = 100, strength = 100, digestive_strength = 100, height = 100) -> None:
         # Create a database connection
         conn = sqlite3.connect(self.db_name)
         
@@ -172,7 +172,7 @@ class DatabaseHandler:
         
         cursor.execute("INSERT INTO species (name, trophic_type, heterotroph_level) VALUES (?, ?, ?)", (species_name, "heterotrophic", heterotroph_level))
 
-        cursor.execute("INSERT INTO species (name, armor, speed, strength, digestive_strength, height) VALUES (?, ?, ?, ?, ?, ?)", (species_name, armor, speed, strength, digestive_strengh, height))
+        cursor.execute("INSERT INTO heterotroph_species (name, armor, speed, strength, digestive_strength, height) VALUES (?, ?, ?, ?, ?, ?)", (species_name, armor, speed, strength, digestive_strength, height))
         
         # Commit the changes
         conn.commit()

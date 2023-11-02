@@ -46,11 +46,28 @@ def add_species():
         trophic_type = request.form.get('trophic_type')
 
         if name and trophic_type:
-            heterotroph_level = None
-            if trophic_type == 'heterotrophic':
-                heterotroph_level = request.form.get('heterotroph_level')
 
-            planet.db_handler.insert_species(name,trophic_type, heterotroph_level)
+            heterotroph_level = None
+
+            if trophic_type == 'heterotrophic':
+
+                heterotroph_level = request.form.get('heterotroph_level')
+                armor = request.form.get('armor')
+                speed = request.form.get('speed')
+                strength = request.form.get('strength')
+                digestive_strength = request.form.get('digestive_strength')
+                height = request.form.get('height')
+
+                planet.db_handler.insert_heterotroph_species(name, heterotroph_level, armor, speed, strength, digestive_strength, height)
+
+            elif trophic_type == 'autotrophic':
+                toxicity = request.form.get('toxicity')
+                height = request.form.get('height')
+                size_of_leaves = request.form.get('size_of_leaves')
+                depth_of_roots = request.form.get('depth_of_roots')
+
+                planet.db_handler.insert_autotroph_species(name, toxicity, height, depth_of_roots, size_of_leaves)  
+
             return redirect(url_for('add_species'))
 
     species = planet.db_handler.execute_sql_query("SELECT name,trophic_type,heterotroph_level FROM species")

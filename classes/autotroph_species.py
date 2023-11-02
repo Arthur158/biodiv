@@ -1,4 +1,5 @@
 from classes.species import Species
+from utility import calculate_stats_autotroph
 
 
 class AutotrophSpecies(Species):
@@ -27,9 +28,4 @@ class AutotrophSpecies(Species):
 
     def calculate_stats(self):
 
-        self.unreachability = 1.0 * self.height
-        self.light_absorption = 0.4 * self.height + 0.6 * self.size_of_leaves
-        self.water_absorption = 1.0 * self.depth_of_roots
-
-        self.calories_cost = 1.0 * self.toxicity + 1.5 * self.height + 1.0 * self.depth_of_roots + 0.6 * self.size_of_leaves
-        self.provided_food = 1.5 * self.height + 0.8 * self.depth_of_roots + 1.0 * self.size_of_leaves
+       self.toxicity, self.unreachability, self.depth_of_roots, self.size_of_leaves, self.calories_cost, self.provided_food = calculate_stats_autotroph(self.toxicity, self.height, self.depth_of_roots, self.size_of_leaves)

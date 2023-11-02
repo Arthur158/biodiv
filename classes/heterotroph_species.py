@@ -1,4 +1,5 @@
 from classes.species import Species
+from utility import calculate_stats_heterotroph
 
 
 class HeterotrophSpecies(Species):
@@ -30,15 +31,4 @@ class HeterotrophSpecies(Species):
         self.calculate_stats()
 
     def calculate_stats(self):
-
-        self.evasion = 1.0 * self.speed
-        self.anti_evasion =  1.0 * self.speed
-
-        self.attack = 0.2 * self.armor + 0.8 * self.strength
-        self.defense = 0.8 * self.armor + 0.2 * self.strength
-
-        self.calories_cost = 1.5 * self.speed + 1.0 * self.armor + 1.0 * self.strength + 1.0 * self.digestive_strength + 1.0 * self.height
-
-        self.provided_food = 1.5 * self.speed + 2.0 * self.strength + 2.5 * self.height
-
-        # equations will be changed once we have a working system.
+        self.evasion, self.anti_evasion, self.attack, self.defense, self.calories_cost, self.provided_food = calculate_stats_heterotroph(self.armor, self.speed, self.strength, self.digestive_strength, self.height)

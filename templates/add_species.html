@@ -10,7 +10,7 @@
             padding: 0;
             height: 100vh;
             background-color: #f4f4f4;
-            background-image: url("{{ url_for('static', filename='images/3.png') }}");
+            background-image: url("{{ url_for('static', filename='images/8.png') }}");
             display: flex;
             flex-direction: column;
             justify-content: space-around; /* Distribute items evenly */
@@ -25,7 +25,9 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            width: 300px;
+            width: 50%;
+            padding: 50px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         form label {
@@ -33,19 +35,13 @@
         }
 
         .results {
-            width: 500px;
-            max-height: 300px; /* Set a fixed height */
+            width: 50%;
             overflow-y: auto;  /* Make it scrollable */
-            margin: 20px 0;
-            padding: 20px;
-            background-color: #ffffff;
+            padding: 50px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+
 
         th, td {
             padding: 10px;
@@ -93,6 +89,30 @@
             background-color: #f1f1f1;
         }
 
+        #form {
+            width : 100%
+        }
+
+        #name {
+            width: 240%
+        }
+
+        #randomizeName {
+            width: 20%
+        }
+
+        .name-container {
+            display: flex;
+            width: 50%;
+        }
+        
+        .main-container {
+            display: flex;
+            margin: 20px; /* or any value you prefer */
+            width:80%;
+            height: 60%;
+        }
+
         .bar-button {
             padding: 15px 30px;
             font-size: 18px;
@@ -104,7 +124,33 @@
             cursor: not-allowed;
         }
 
+        .field-group {
+            display: none;
+        }
 
+        /* Style for the main container */
+        .flex-container {
+            display: flex; 
+            gap:30px;
+        }
+
+        /* Set a max-width for the slider-container to prevent it from expanding too much */
+        #slider-container {
+            flex: 1; /* Allows this element to grow */
+            padding-right: 20px; /* A bit of spacing between sliders and tables */
+            max-width: 50%;  /* You can adjust this value */
+        }
+
+        /* Adjust width for both tables */
+        #heterotrophic-values, #autotrophic-values {
+            flex: 1; /* Allows these elements to grow */
+        }
+
+        /* Style for cells in the tbody */
+        #heterotrophic-values tbody td, #autotrophic-values tbody td {
+            width: 60px;  /* Splits the width equally between attribute and value columns */
+            text-align: left;
+        }
     </style>
  
     
@@ -129,71 +175,107 @@
         {% endif %}
         <button class="bar-button" id="back-btn">Back</button>
         <button class="bar-button" id="menu-btn">Menu</button>
-      </div>
-    <h1>Add A Species</h1>
-    
-    <form action="/add_species" method="post">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
-        <button type="button" id="randomizeName">Randomize Name</button>
-            <label for="trophic_type">Trophic Type:</label>
-            <select id="trophic_type" name="trophic_type">
-                <option value="heterotrophic">Heterotrophic</option>
-                <option value="autotrophic">Autotrophic</option>
-            </select>
-    
-            <div id="slider-container">
-                <span>Carnivore</span>
-                <input type="range" id="slider" name="heterotroph_level" min="0" max="100" style="vertical-align: middle;">
-                <span>Herbivore</span>
+    </div>
+    <h1>Add a species</h1>
+      <div class="main-container">
+        <form action="/add_species" id="form" method="post">
+            <div class="flex-container">
+                <div class="name-container">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                    <button type="button" id="randomizeName">Randomize Name</button>
+                </div>
+                <div class="name-container">
+                    <label for="trophic_type">Trophic Type:</label>
+                    <select id="trophic_type" name="trophic_type">
+                        <option value="heterotrophic">Heterotrophic</option>
+                        <option value="autotrophic">Autotrophic</option>
+                    </select>
+                </div>
             </div>
-            
-
-        <input type="submit" value="Submit">
-    </form>
-    
-    <h2>Species:</h2>
-    <div class="results">
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Trophic Type</th>
-                    <th>Heterotroph Level</th>
-                    <th>Role</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for specie in species %}
-                <tr>
-                    <td><a href="/species/{{specie[0]}}">{{ specie[0] }}</a></td>
-                    <td>{{ specie[1] }}</td>
-                    <td>
-                        {% if specie[2] is not none %}
-                        <span style="color: green;">{{ specie[2] }}</span> / <span style="color: red;">{{ 100 - specie[2] }}</span>
-                        {% else %}
-                        N/A
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if specie[1] == "autotrophic"%}
-                        <span style="color: lightgreen;"> autotrophic</span> 
-
-                        {% elif specie[2] > 75 %}
-                        <span style="color: green;"> herbivore</span> 
-
-                        {% elif specie[2] < 25 %}
-                        <span style="color: red;"> carnivore</span> 
-
-                        {% else %}
-                        <span style="color: orange;"> omnivore</span> 
-                        {% endif %}
-                        </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
         
+            <div class="flex-container">
+                <table id="slider-container-table">
+                    <thead>
+                        <th>Option</th>
+                        <th>Slider</th>
+                        <th>Value</th>
+                    </thead>
+                    <tbody id="slider-container">
+
+                    </tbody>
+                </table>
+                
+                <table id="heterotrophic-values" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Attribute</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Values for heterotrophic species will be populated here -->
+                    </tbody>
+                </table>
+                
+                <table id="autotrophic-values" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Attribute</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Values for autotrophic species will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        
+            <input type="submit" value="Submit">
+        </form>
+        <div class="results">  
+            <h2>Species:</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Trophic Type</th>
+                        <th>Heterotroph Level</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for specie in species %}
+                    <tr>
+                        <td><a href="/species/{{specie[0]}}">{{ specie[0] }}</a></td>
+                        <td>{{ specie[1] }}</td>
+                        <td>
+                            {% if specie[2] is not none %}
+                            <span style="color: green;">{{ specie[2] }}</span> / <span style="color: red;">{{ 100 - specie[2] }}</span>
+                            {% else %}
+                            N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if specie[1] == "autotrophic"%}
+                            <span style="color: lightgreen;"> autotrophic</span> 
+
+                            {% elif specie[2] > 75 %}
+                            <span style="color: green;"> herbivore</span> 
+
+                            {% elif specie[2] < 25 %}
+                            <span style="color: red;"> carnivore</span> 
+
+                            {% else %}
+                            <span style="color: orange;"> omnivore</span> 
+                            {% endif %}
+                            </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+        </div>
     </div>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -225,16 +307,112 @@
             });
         });
         document.addEventListener("DOMContentLoaded", function() {
-        const trophicTypeSelect = document.getElementById("trophic_type");
-        const sliderContainer = document.getElementById("slider-container");
+            const trophicTypeSelect = document.getElementById('trophic_type');
+            const sliderContainer = document.getElementById('slider-container');
+            
+            const heterotrophicSliders = ['heterotroph_level', 'armor', 'strength', 'speed', 'digestive_strength', 'height'];
+            const autotrophicSliders = ['toxicity', 'height', 'size_of_leaves', 'depth_of_roots'];
 
-            trophicTypeSelect.addEventListener("change", function() {
-                if (this.value === "heterotrophic") {
-                    sliderContainer.style.display = "block";
-                } else {
-                    sliderContainer.style.display = "none";
+            const heterotrophicValues = ['evasion', 'anti-evasion', 'attack', 'defense', 'calorie_cost', 'reach', 'provided_food'];
+            const autotrophicValues = ['unreachability', 'light_absorption', 'water_absorption', 'calories_cost', 'provided_food', 'reach'];
+
+            
+            function createSliderRow(name) {
+                const row = document.createElement('tr');
+                
+                // Create the label cell
+                const labelCell = document.createElement('td');
+                labelCell.textContent = name.replace('_', ' ');
+                row.appendChild(labelCell);
+                
+                // Create the slider cell
+                const sliderCell = document.createElement('td');
+                const slider = document.createElement('input');
+                slider.type = 'range';
+                slider.id = name;
+                slider.name = name;
+                slider.min = 0;
+                slider.max = 100;
+                sliderCell.appendChild(slider);
+                row.appendChild(sliderCell);
+                
+                // Create the value cell
+                const valueCell = document.createElement('td');
+                const valueBox = document.createElement('span');  // Changed from 'div' to 'span' for inline display
+                valueBox.id = `${name}-value`;  // Changed the id format for consistency
+                valueBox.textContent = slider.value;
+                valueCell.appendChild(valueBox);
+                row.appendChild(valueCell);
+                
+                // Update value box when slider changes
+                slider.addEventListener('input', function() {
+                    valueBox.textContent = slider.value;
+                    
+                    // Here you can also add the AJAX call to update server-side values if necessary
+                });
+                
+                return row;
+            }
+
+            function populateValuesTable(valuesArray, tableID) {
+                const table = document.getElementById(tableID);
+                const tbody = table.querySelector('tbody');
+                
+                // Clear existing values
+                tbody.innerHTML = '';
+                
+                for (const valueName of valuesArray) {
+                    const row = document.createElement('tr');
+                    
+                    const labelCell = document.createElement('td');
+                    labelCell.textContent = valueName.replace('_', ' ');
+                    row.appendChild(labelCell);
+
+                    const valueCell = document.createElement('td');
+                    valueCell.textContent = '...'; // Placeholder value until AJAX updates it
+                    valueCell.id = valueName; // ID for easy update
+                    row.appendChild(valueCell);
+                    
+                    tbody.appendChild(row);
                 }
+            }
+
+            
+            function populateSliders(sliderNames) {
+                
+                const table = document.getElementById("slider-container-table")
+
+                const tbody = table.querySelector('tbody');
+                
+                // Clear existing values
+                tbody.innerHTML = '';
+                
+                // Add sliders
+                for (const name of sliderNames) {
+                    const row = createSliderRow(name);
+                    tbody.appendChild(row);
+                }
+
+                if (sliderNames === heterotrophicSliders) {
+                    populateValuesTable(heterotrophicValues, 'heterotrophic-values');
+                    document.getElementById('autotrophic-values').style.display = 'none';
+                    document.getElementById('heterotrophic-values').style.display = '';
+                } else {
+                    populateValuesTable(autotrophicValues, 'autotrophic-values');
+                    document.getElementById('heterotrophic-values').style.display = 'none';
+                    document.getElementById('autotrophic-values').style.display = '';
+                }
+            }
+            
+            // Populate sliders based on initial trophic type
+            populateSliders(trophicTypeSelect.value === 'heterotrophic' ? heterotrophicSliders : autotrophicSliders);
+            
+            // Change sliders when trophic type changes
+            trophicTypeSelect.addEventListener('change', function() {
+                populateSliders(this.value === 'heterotrophic' ? heterotrophicSliders : autotrophicSliders);
             });
+
+            // Add logic here to update calculated values when sliders change
         });
         const playPauseBtn = document.getElementById('play-pause-btn');
         const skipBtn = document.getElementById('skip-btn');
