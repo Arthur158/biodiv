@@ -1,13 +1,9 @@
 from flask import Flask, jsonify, request, render_template, redirect, url_for, send_from_directory
 from flask_uploads import UploadSet, configure_uploads, IMAGES
 import os
-from classes.climate import Climate
-
 from classes.planet import Planet
-from classes.population import Population
-from classes.region import Region
-from classes.species import Species
 from constants import SPECIES_IMAGE_FOLDER
+from math_utils import calculate_stats_autotroph, calculate_stats_heterotroph
 from name_generator import get_random_name, get_random_region_name
 
 app = Flask(__name__)
@@ -31,7 +27,7 @@ def add_region():
         climate = request.form.get('climate')
 
         if name and climate:
-            planet.add_region(Region(name, Climate(climate)))
+            planet.db_handler.insert_region(name, climate)
             return redirect(url_for('add_region'))
         
     regions= planet.db_handler.execute_sql_query("SELECT name, climate FROM regions")
@@ -72,6 +68,20 @@ def add_species():
 
     species = planet.db_handler.execute_sql_query("SELECT name,trophic_type,heterotroph_level FROM species")
     return render_template('add_species.html', species=species, status=planet.status.value, year=planet.year)
+
+@app.route('/calculate_stats_autotroph', methods=['POST'])
+def calculate_autotroph():
+    data = request.get_json()
+    toxicity, unreachability, light_absorption, water_absorption, calories_cost, provided_grass = calculate_stats_autotroph(int(data["toxicity"]), int(data["height"]), int(data["depth_of_roots"]), int(data["size_of_leaves"]))
+
+    return jsonify({ "toxicity": toxicity, "unreachability": unreachability, "light_absorption": light_absorption, "water_absorption": water_absorption, "calories_cost": calories_cost, "provided_grass": provided_grass })
+
+@app.route('/calculate_stats_heterotroph', methods=['POST'])
+def calculate_heterotroph():
+    data = request.get_json()
+    evasion, anti_evasion, attack, defense, calories_cost, provided_meat, reach = calculate_stats_heterotroph(int(data["armor"]), int(data["speed"]), int(data["strength"]), int(data["digestive_strength"]), int(data["size"]))
+
+    return jsonify({ "evasion": evasion, "anti_evasion": anti_evasion, "attack": attack, "defense": defense, "calories_cost": calories_cost, "provided_meat": provided_meat, "reach":reach })
 
 
 @app.route('/region/<region_name>', methods=['GET', 'POST'])

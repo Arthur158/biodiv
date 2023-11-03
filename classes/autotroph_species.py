@@ -1,5 +1,5 @@
 from classes.species import Species
-from utility import calculate_stats_autotroph
+from math_utils import calculate_stats_autotroph
 
 
 class AutotrophSpecies(Species):

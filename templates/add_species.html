@@ -310,11 +310,71 @@
             const trophicTypeSelect = document.getElementById('trophic_type');
             const sliderContainer = document.getElementById('slider-container');
             
-            const heterotrophicSliders = ['heterotroph_level', 'armor', 'strength', 'speed', 'digestive_strength', 'height'];
+            const heterotrophicSliders = ['heterotroph_level', 'armor', 'strength', 'speed', 'digestive_strength', 'size'];
             const autotrophicSliders = ['toxicity', 'height', 'size_of_leaves', 'depth_of_roots'];
 
-            const heterotrophicValues = ['evasion', 'anti-evasion', 'attack', 'defense', 'calorie_cost', 'reach', 'provided_food'];
-            const autotrophicValues = ['unreachability', 'light_absorption', 'water_absorption', 'calories_cost', 'provided_food', 'reach'];
+            const heterotrophicValues = ['evasion', 'anti-evasion', 'attack', 'defense', 'calorie_cost', 'reach', 'provided_meat'];
+            const autotrophicValues = ['Toxicity','unreachability', 'light_absorption', 'water_absorption', 'provided_grass', 'calories_cost'];
+
+            function updateValuesAutotroph() {
+                let toxicity = document.getElementById('toxicity').value                
+                let height = document.getElementById('height').value
+                let size_of_leaves = document.getElementById('size_of_leaves').value
+                let depth_of_roots = document.getElementById('depth_of_roots').value
+
+
+                // Make the AJAX call using fetch API
+                fetch('/calculate_stats_autotroph', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ toxicity: toxicity, height: height, size_of_leaves: size_of_leaves, depth_of_roots: depth_of_roots })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('Toxicity').textContent = data.toxicity;
+                    document.getElementById('unreachability').textContent = data.unreachability;
+                    document.getElementById('light_absorption').textContent = data.light_absorption;
+                    document.getElementById('water_absorption').textContent = data.water_absorption;
+                    document.getElementById('provided_grass').textContent = data.provided_grass;
+                    document.getElementById('calories_cost').textContent = data.calories_cost;
+                })
+                .catch((error) => {
+                console.error('Error:', error);
+                });
+            }
+
+            function updateValuesHeterotroph() {
+                let armor = document.getElementById('armor').value                
+                let speed = document.getElementById('speed').value
+                let strength = document.getElementById('strength').value
+                let digestive_strength = document.getElementById('digestive_strength').value
+                let size = document.getElementById('size').value
+
+
+                // Make the AJAX call using fetch API
+                fetch('/calculate_stats_heterotroph', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ armor: armor, speed: speed, strength: strength, digestive_strength: digestive_strength, size: size })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('evasion').textContent = data.evasion;
+                    document.getElementById('anti-evasion').textContent = data.anti_evasion;
+                    document.getElementById('attack').textContent = data.attack;
+                    document.getElementById('defense').textContent = data.defense;
+                    document.getElementById('provided_meat').textContent = data.provided_meat;
+                    document.getElementById('calorie_cost').textContent = data.calories_cost;
+                    document.getElementById('reach').textContent = data.reach;
+                })
+                .catch((error) => {
+                console.error('Error:', error);
+                });
+            }
 
             
             function createSliderRow(name) {
@@ -333,6 +393,18 @@
                 slider.name = name;
                 slider.min = 0;
                 slider.max = 100;
+
+
+                if(heterotrophicSliders.includes(name)){
+                    slider.addEventListener("input", function(event) {
+                        updateValuesHeterotroph()
+                    })
+                } else {
+                    slider.addEventListener("input", function(event){
+                        updateValuesAutotroph()
+                    })
+                }
+
                 sliderCell.appendChild(slider);
                 row.appendChild(sliderCell);
                 
@@ -378,7 +450,7 @@
             }
 
             
-            function populateSliders(sliderNames) {
+            function populateSliders(sliderNames, trophic_type) {
                 
                 const table = document.getElementById("slider-container-table")
 

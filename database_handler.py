@@ -47,7 +47,7 @@ class DatabaseHandler:
                         speed INTEGER,
                         strength INTEGER,
                         digestive_strength INTEGER,
-                        height INTEGER
+                        size INTEGER
                     );
                 ''')
                 print("Successfully created 'heterotroph_species' table.")
@@ -161,7 +161,7 @@ class DatabaseHandler:
         # Close the connection
         conn.close()
 
-    def insert_heterotroph_species(self, species_name, heterotroph_level, armor = 100, speed = 100, strength = 100, digestive_strength = 100, height = 100) -> None:
+    def insert_heterotroph_species(self, species_name, heterotroph_level, armor = 30, speed = 30, strength = 30, digestive_strength = 30, size = 30) -> None:
         # Create a database connection
         conn = sqlite3.connect(self.db_name)
         
@@ -172,7 +172,7 @@ class DatabaseHandler:
         
         cursor.execute("INSERT INTO species (name, trophic_type, heterotroph_level) VALUES (?, ?, ?)", (species_name, "heterotrophic", heterotroph_level))
 
-        cursor.execute("INSERT INTO heterotroph_species (name, armor, speed, strength, digestive_strength, height) VALUES (?, ?, ?, ?, ?, ?)", (species_name, armor, speed, strength, digestive_strength, height))
+        cursor.execute("INSERT INTO heterotroph_species (name, armor, speed, strength, digestive_strength, size) VALUES (?, ?, ?, ?, ?, ?)", (species_name, armor, speed, strength, digestive_strength, size))
         
         # Commit the changes
         conn.commit()

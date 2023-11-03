@@ -41,7 +41,7 @@ class Planet:
         for autotroph_specie_data in autotroph_species_data:
             self.species.get(autotroph_specie_data[0]).update_stats(autotroph_specie_data[1], autotroph_specie_data[2], autotroph_specie_data[3], autotroph_specie_data[4])
 
-        heterotroph_species_data = self.db_handler.execute_sql_query("SELECT name, armor, speed, strength, digestive_strength, height FROM heterotroph_species")
+        heterotroph_species_data = self.db_handler.execute_sql_query("SELECT name, armor, speed, strength, digestive_strength, size FROM heterotroph_species")
 
         for heterotroph_specie_data in heterotroph_species_data:
             self.species.get(heterotroph_specie_data[0]).update_stats(heterotroph_specie_data[1], heterotroph_specie_data[2], heterotroph_specie_data[3], heterotroph_specie_data[4], heterotroph_specie_data[5])
