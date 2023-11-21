@@ -1,9 +1,8 @@
-from typing import Dict, List
-from classes.climate import Temperature, Humidity, Climate, infer_climate
+from typing import Dict
+from classes.climate import Climate
 from classes.population import Population
 from constants import CLIMATE_TO_RESOURCES, DATABASE_NAME
 from database_handler import DatabaseHandler
-from errors import InputError
 
 class Region:
     def __init__(self, name: str, climate: Climate, db_name = DATABASE_NAME) -> None:

@@ -1,20 +1,4 @@
-from utility import gaussian
-
-print(gaussian(8, 10))
-print(gaussian(10, 10))
-print(gaussian(12, 10))
-print(gaussian(4, 5))
-print(gaussian(5, 5))
-print(gaussian(6, 5))
-print(gaussian(8, 10))
-print(gaussian(10, 10))
-print(gaussian(12, 10))
-print(gaussian(4, 5))
-print(gaussian(5, 5))
-print(gaussian(6, 5))
-print(gaussian(8, 10))
-print(gaussian(10, 10))
-print(gaussian(12, 10))
-print(gaussian(4, 5))
-print(gaussian(5, 5))
-print(gaussian(6, 5))
+liste = [[1, 2, 3], [4,5,6], [7,8,9]]
+print(liste)
+liste2 = [[liste[-i][::-1]] for i in range(1,4)]
+print(liste2)

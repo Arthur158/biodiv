@@ -3,16 +3,16 @@ from math_utils import calculate_stats_heterotroph
 
 
 class HeterotrophSpecies(Species):
-    def __init__(self, name: str, heterotroph_level: int, armor=30, speed=30, strength=30, digestive_strength = 30, size = 30) -> None:
+    def __init__(self, name: str, heterotroph_level: int) -> None:
         super().__init__(name)
 
         self.heterotroph_level = heterotroph_level
 
-        self.armor = armor
-        self.speed = speed
-        self.strength = strength
-        self.digestive_strength = digestive_strength
-        self.size = size
+        self.armor = 0
+        self.speed = 0
+        self.strength = 0
+        self.digestive_strength: float = 0
+        self.size: float = 0
 
         self.evasion: float = 0
         self.anti_evasion: float = 0

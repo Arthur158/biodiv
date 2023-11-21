@@ -52,9 +52,11 @@ def add_species():
                 speed = request.form.get('speed')
                 strength = request.form.get('strength')
                 digestive_strength = request.form.get('digestive_strength')
-                height = request.form.get('height')
+                size = request.form.get('size')
 
-                planet.db_handler.insert_heterotroph_species(name, heterotroph_level, armor, speed, strength, digestive_strength, height)
+                if heterotroph_level and armor and speed and strength and digestive_strength and size:
+                    planet.db_handler.insert_heterotroph_species(name, heterotroph_level, armor, speed, strength, digestive_strength, size)
+
 
             elif trophic_type == 'autotrophic':
                 toxicity = request.form.get('toxicity')
@@ -62,7 +64,8 @@ def add_species():
                 size_of_leaves = request.form.get('size_of_leaves')
                 depth_of_roots = request.form.get('depth_of_roots')
 
-                planet.db_handler.insert_autotroph_species(name, toxicity, height, depth_of_roots, size_of_leaves)  
+                if toxicity and height and size_of_leaves and depth_of_roots:
+                    planet.db_handler.insert_autotroph_species(name, toxicity, height, depth_of_roots, size_of_leaves)  
 
             return redirect(url_for('add_species'))
 
@@ -87,9 +90,6 @@ def calculate_heterotroph():
 @app.route('/region/<region_name>', methods=['GET', 'POST'])
 def show_region(region_name):
 
-    region = planet.db_handler.execute_sql_query("SELECT name, climate FROM regions WHERE regions.name = ?", (region_name))
-    #for future uses.
-
     populations = planet.db_handler.execute_sql_query("SELECT populations.species, populations.population_size, species.trophic_type, species.heterotroph_level, populations.id FROM populations JOIN species ON species.name == populations.species WHERE populations.region = ?", (region_name,))
 
     species_names = planet.db_handler.execute_sql_query("SELECT name FROM species")
@@ -104,7 +104,8 @@ def register_population():
     species = request.form.get('species')
     population_size = request.form.get('population_size')
 
-    planet.db_handler.insert_population(species, population_size, region_name)
+    if region_name and species and population_size:
+        planet.db_handler.insert_population(species, population_size, region_name)
 
     return "correctly added the population"
 
@@ -113,6 +114,8 @@ def register_population():
 def show_species(species_name):
 
     species = planet.db_handler.execute_sql_query("SELECT name, trophic_type, heterotroph_level FROM species WHERE species.name == ?", (species_name,))[0]
+
+
     populations = planet.db_handler.execute_sql_query("SELECT population_size, region, id FROM populations WHERE populations.species = ?", (species_name,))
 
     if request.method == 'POST':
@@ -121,7 +124,14 @@ def show_species(species_name):
 
     image_exists = os.path.exists(os.path.join(SPECIES_IMAGE_FOLDER, f"{species_name}.jpg"))
 
-    return render_template('species.html', populations= populations, image_exists=image_exists, species_name=species_name, trophic_type=species[1], heterotrophic_level=species[2], status=planet.status.value, year=planet.year)
+    if species[1] == "heterotrophic":
+        species_data = planet.db_handler.execute_sql_query("SELECT armor, speed, strength, digestive_strength, size FROM heterotroph_species WHERE heterotroph_species.name = ?", (species_name,))[0]
+        species_data += calculate_stats_heterotroph(*species_data)
+        return render_template('heterotroph-species.html', extra_data=species_data, populations= populations, image_exists=image_exists, species_name=species_name, trophic_type=species[1], heterotrophic_level=species[2], status=planet.status.value, year=planet.year)
+    else:
+        species_data = planet.db_handler.execute_sql_query("SELECT toxicity, height, depth_of_roots, size_of_leaves FROM autotroph_species WHERE autotroph_species.name = ?", (species_name,))[0]
+        species_data += calculate_stats_autotroph(*species_data)
+        return render_template('autotroph-species.html', extra_data=species_data, populations= populations, image_exists=image_exists, species_name=species_name, trophic_type=species[1], heterotrophic_level=species[2], status=planet.status.value, year=planet.year)
 
 
 @app.route('/population/<region_name>/<species_name>', methods=['GET'])

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ species_name }}</title>
+    <style>
+        /* General Styling */
+body {
+    background-image: url("{{ url_for('static', filename='images/6.png') }}");
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+}
+
+.container {
+    width: 90%;
+    margin: 2% auto;
+    padding: 2%;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    color: #333;
+}
+
+/* Button Bar Styling */
+#button-bar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f1f1f1;
+}
+
+.bar-button {
+    padding: 15px 30px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.bar-button:hover {
+    background-color: #e5e5e5;
+}
+
+/* Top Section Styling */
+.top-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.left-section, .right-section {
+    width: 48%;
+}
+
+/* Species Image Section */
+img {
+    max-width: 400px; /* Adjust this value to your preference */
+    width: 100%; /* This ensures that images smaller than the max-width still appear at their natural size */
+    border: 1px solid #ccc;
+    padding: 2%;
+    border-radius: 5px;
+    display: block; /* This will center the image */
+    margin: 0 auto; /* This will center the image */
+}
+
+#upload-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#file-input {
+    margin-bottom: 1%;
+}
+
+/* Traits and Population Section */
+.traits-section, .population-section {
+    border: 1px solid #ccc;
+    padding: 1%;
+    border-radius: 5px;
+    margin-bottom: 1%;
+}
+.traits-section {
+    display: flex; /* Enable flexbox layout */
+    justify-content: space-between; /* Distribute space between the two sublists */
+}
+
+.sublist {
+    width: 48%; /* Use slightly less than half the available width for each sublist */
+    /* You can add other styling elements as needed */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 0.5%;
+    text-align: left;
+}
+
+thead {
+    background-color: #e5e5e5;
+}
+
+.scrollable-tbody {
+    max-height: 200px;
+    overflow-y: auto;
+    display: block;
+}
+
+tbody {
+    display: block;
+}
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="button-bar">
+            <button class="bar-button" id="save-btn">Save</button>
+            {% if status == "closed" %}
+                <button class="bar-button" id="play-pause-btn" disabled>Play</button>
+            {% elif status == "paused" %}
+                <button class="bar-button" id="play-pause-btn">Play</button>
+            {% else %}
+                <button class="bar-button" id="play-pause-btn">Pause</button>
+            {% endif %}
+            <button class="bar-button" id="year-btn" style="cursor: not-allowed">Year: {{year}}</button>
+            {% if status == "closed" %}
+                <button class="bar-button" id="skip-btn" disabled>Skip</button>
+            {% elif status == "paused" %}
+                <button class="bar-button" id="skip-btn">Skip</button>
+            {% else %}
+                <button class="bar-button" id="skip-btn" disabled>Skip</button>
+            {% endif %}
+            <button class="bar-button" id="back-btn">Back</button>
+            <button class="bar-button" id="menu-btn">Menu</button>
+        </div>
+
+        <div class="top-section">
+            <div class="left-section">
+                <h1>{{ species_name }}</h1>
+                <!-- ... Your species image section ... -->
+                {% if image_exists == True %}
+                    <img src= "{{ url_for('static', filename='images/species/' + species_name + '.jpg') }}" alt="Species Image">
+                {% else %}
+                    <form id="upload-form" action="/species/{{ species_name }}" method="post" enctype="multipart/form-data">
+                        <input type="file" name="file" id="file-input">
+                        <input type="submit" value="Upload">
+                    </form>
+                {% endif %}
+            </div>
+
+            <div class="right-section">
+                <div class="traits-section">
+                    <!-- First Sublist -->
+                    <div class="sublist">
+                        <h2>Data About Species (Part 1)</h2>
+                        <table>
+                            <tbody class="scrollable-tbody">
+                                <tr><td>Trophic Type:</td><td>{{ trophic_type }}</td></tr>
+                                <tr><td>Heterotroph Level:</td><td>{{ heterotrophic_level }}</td></tr>
+                                <tr><td>Armor:</td><td>{{ extra_data[0] }}</td></tr>
+                                <tr><td>Speed:</td><td>{{ extra_data[1] }}</td></tr>
+                                <tr><td>Strength:</td><td>{{ extra_data[2] }}</td></tr>
+                                <tr><td>Digestive Strength:</td><td>{{ extra_data[3] }}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                
+                    <!-- Second Sublist -->
+                    <div class="sublist">
+                        <h2>Data About Species (Part 2)</h2>
+                        <table>
+                            <tbody class="scrollable-tbody">
+                                <tr><td>Size:</td><td>{{ extra_data[4] }}</td></tr>
+                                <tr><td>Evasion:</td><td>{{ extra_data[5] }}</td></tr>
+                                <tr><td>Anti-Evasion:</td><td>{{ extra_data[6] }}</td></tr>
+                                <tr><td>Attack:</td><td>{{ extra_data[7] }}</td></tr>
+                                <tr><td>Defense:</td><td>{{ extra_data[8] }}</td></tr>
+                                <tr><td>Calories Cost:</td><td>{{ extra_data[9] }}</td></tr>
+                                <tr><td>Provided Meat:</td><td>{{ extra_data[10] }}</td></tr>
+                                <tr><td>Reach:</td><td>{{ extra_data[11] }}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="population-section">
+                    <!-- Your populations table ... -->
+                    <h2>Populations</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Region</th>
+                                <th>Population size</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for population in populations %}
+                                <tr>
+                                    <td><a href="/population/{{population[1]}}/{{species_name}}">{{ population[1] }}</a></td>
+                                    <td>{{ population[0] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ... Any other sections you might have ... -->
+    </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function handleFileSelect(evt) {
+            evt.stopPropagation();
+            evt.preventDefault();
+
+            const files = evt.dataTransfer.files;  // FileList object.
+
+            // Create a FormData object
+            const formData = new FormData();
+            formData.append('file', files[0]);
+
+            // Use fetch or XMLHttpRequest to send the FormData object to the server
+            fetch(`/species/{{ species_name }}`, {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())  // Assume server replies with json
+            .then(data => console.log(data))
+            .catch((error) => console.error('Error:', error));
+        }
+        $(document).ready(function() {
+            $("#save-btn").click(function() {
+                $.ajax({
+                    url: "/save",
+                    type: "GET",
+                });
+            });
+            $("#skip-btn").click(function() {
+                $.ajax({
+                    url: "/skip",
+                    type: "GET",
+                    success: function(response) {
+                        location.reload();
+                    }
+                });
+            });
+        });
+        document.getElementById("back-btn").addEventListener("click", function() {
+            window.history.back();
+        });
+        document.getElementById("menu-btn").addEventListener("click", function() {
+            window.location.href = "/";  // Replace with the local path you want to navigate to
+        });
+    </script>
+
+</body>
+</html>

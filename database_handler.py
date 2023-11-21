@@ -90,7 +90,7 @@ class DatabaseHandler:
         
         conn.close()
 
-    def execute_sql_query(self, sql_query: str, params: Tuple[Any] = ()) -> List[Tuple[Any]]:
+    def execute_sql_query(self, sql_query: str, params: Tuple[Any, ...] = ()) -> List[Tuple[Any, ...]]:
 
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
@@ -125,7 +125,7 @@ class DatabaseHandler:
         # Close the connection
         conn.close()
 
-    def insert_population(self, species: str, population_size: int, region: str) -> None:
+    def insert_population(self, species: str, population_size: str, region: str) -> None:
         # Create a database connection
         conn = sqlite3.connect(self.db_name)
         
@@ -142,7 +142,7 @@ class DatabaseHandler:
         # Close the connection
         conn.close()
 
-    def insert_autotroph_species(self, species_name, toxicity = 100, height = 100, depth_of_roots = 100, size_of_leaves = 100) -> None:
+    def insert_autotroph_species(self, species_name: str, toxicity: str, height: str, depth_of_roots: str, size_of_leaves: str) -> None:
         # Create a database connection
         conn = sqlite3.connect(self.db_name)
         
@@ -161,7 +161,7 @@ class DatabaseHandler:
         # Close the connection
         conn.close()
 
-    def insert_heterotroph_species(self, species_name, heterotroph_level, armor = 30, speed = 30, strength = 30, digestive_strength = 30, size = 30) -> None:
+    def insert_heterotroph_species(self, species_name: str, heterotroph_level: str, armor: str, speed: str, strength: str, digestive_strength: str, size: str) -> None:
         # Create a database connection
         conn = sqlite3.connect(self.db_name)
         
@@ -180,7 +180,7 @@ class DatabaseHandler:
         # Close the connection
         conn.close()
 
-    def delete_population(self, region_name, species_name):
+    def delete_population(self, region_name: str, species_name: str):
                 # Create a database connection
         conn = sqlite3.connect(self.db_name)
         
@@ -204,7 +204,7 @@ class DatabaseHandler:
             conn = sqlite3.connect(self.db_name)
             cursor = conn.cursor()
             # Loop through the tables and delete all records from each table
-            for table in ['populations', 'species', 'regions']:
+            for table in ['populations', 'species', 'regions', 'autotroph_species', 'heterotroph_species']:
                 cursor.execute(f"DELETE FROM {table};")
             
             # Commit the changes

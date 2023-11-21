@@ -17,9 +17,9 @@ def calculate_stats_autotroph(toxicity, height, depth_of_roots, size_of_leaves):
     water_absorption = 1.0 * depth_of_roots
 
     calories_cost = 0.2 * toxicity + 0.3 * height + 0.2 * depth_of_roots + 0.3 * size_of_leaves
-    provided_food = 0.4 * height + 0.3 * depth_of_roots + 0.3 * size_of_leaves
+    provided_grass = 0.4 * height + 0.3 * depth_of_roots + 0.3 * size_of_leaves
 
-    return round(toxicity), round(unreachability), round(light_absorption), round(water_absorption), round(calories_cost), round(provided_food)
+    return round(toxicity), round(unreachability), round(light_absorption), round(water_absorption), round(calories_cost), round(provided_grass)
 
 def calculate_stats_heterotroph(armor, speed, strength, digestive_strength, size):
         evasion = 1.0 * speed
@@ -30,9 +30,9 @@ def calculate_stats_heterotroph(armor, speed, strength, digestive_strength, size
 
         calories_cost = 0.3 * speed + 0.2 * armor + 0.2 * strength + 0.1 * digestive_strength + 0.2 * size
 
-        provided_food = 0.2 * speed + 0.3 * strength + 0.5 * size
+        provided_meat = 0.2 * speed + 0.3 * strength + 0.5 * size
 
         reach = 0.3 * speed + 0.4 * strength + 0.3 * size
 
-        return round(evasion), round(anti_evasion), round(attack), round(defense), round(calories_cost), round(provided_food), round(reach)
+        return round(evasion), round(anti_evasion), round(attack), round(defense), round(calories_cost), round(provided_meat), round(reach)
 

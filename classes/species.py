@@ -1,13 +1,12 @@
-from typing import List, Set
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 class Species:
     def __init__(self, name: str) -> None:
         self.name = name
 
-        self.calories_cost = 0
+        self.calories_cost: float = 0
 
-        self.provided_food = 0
+        self.provided_food: float = 0
 
     @abstractmethod
     def update_stats(self):

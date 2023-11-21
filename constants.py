@@ -2,7 +2,7 @@
 
 from classes.climate import Climate
 
-AMOUNT_OF_POOLS = 4
+AMOUNT_OF_POOLS: int = 4
 MATCHUP_SEVERITY = 2
 DATABASE_NAME = "planet.db"
 SPECIES_IMAGE_FOLDER = "static/images/species"

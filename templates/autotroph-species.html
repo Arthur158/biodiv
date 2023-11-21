@@ -6,7 +6,7 @@
     <style>
         /* Base styling */
 body {
-    background-image: url("{{ url_for('static', filename='images/landscape/medium/1.png') }}");
+    background-image: url("{{ url_for('static', filename='images/6.png') }}");
     font-family: 'Arial', sans-serif;
     background-color: #f8f9fa;
     color: #343a40;
@@ -185,6 +185,16 @@ th, td {
             <h3>Data About Species</h3>
             <ul>
                 <li><strong>Trophic Type:</strong> {{ trophic_type }}</li>
+                <li><strong>toxicity: <strong> {{ extra_data[0] }}</li>
+                <li><strong>height: </strong> {{ extra_data[1] }}</li>
+                <li><strong>depth_of_roots: </strong> {{ extra_data[2] }}</li>
+                <li><strong>size_of_leaves: </strong> {{ extra_data[3] }}</li>
+                <li><strong>toxicity: <strong> {{ extra_data[4] }}</li>
+                <li><strong>unreachability: <strong> {{ extra_data[5] }}</li>
+                <li><strong>light absorption: <strong> {{ extra_data[6] }}</li>
+                <li><strong>water absorption: <strong> {{ extra_data[7] }}</li>
+                <li><strong>calories cost: <strong> {{ extra_data[8] }}</li>
+                <li><strong>provided grass: <strong> {{ extra_data[] }}</li>
             </ul>
         </div>
 
